@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { motion } from "framer-motion";
 import type { Ancestor } from "@/lib/genealogy-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -19,7 +18,6 @@ export function AncestorDrawer({
   onClose,
 }: AncestorDrawerProps) {
   const isMobile = useIsMobile();
-  const activeAncestor = ancestors.find(a => a.id === selectedId);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -61,13 +59,13 @@ export function AncestorDrawer({
       <div
         className={`fixed z-50 overflow-hidden border-zinc-800 bg-zinc-950 transition-transform duration-500 ease-in-out ${
           isMobile
-            ? `inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t ${
+            ? `inset-x-0 bottom-0 h-[85vh] rounded-t-2xl border-t ${
                 isOpen ? "translate-y-0" : "translate-y-full"
               }`
             : `right-0 top-0 h-full w-full max-w-md border-l ${
                 isOpen ? "translate-x-0" : "translate-x-full"
               }`
-        }`}
+        } ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="drawer-title"
@@ -106,8 +104,10 @@ export function AncestorDrawer({
                       <p className="text-sm text-zinc-400">{ancestor.title}</p>
                     </div>
                     <button
+                      type="button"
                       onClick={onClose}
                       aria-label="Close details"
+                      tabIndex={isOpen && isActive ? 0 : -1}
                       className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300"
                     >
                       <svg
@@ -151,6 +151,7 @@ export function AncestorDrawer({
                       href={ancestor.verseLink}
                       target="_blank"
                       rel="noopener noreferrer"
+                      tabIndex={isOpen && isActive ? 0 : -1}
                       className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors hover:text-zinc-200"
                     >
                       <span>{ancestor.verseReference}</span>

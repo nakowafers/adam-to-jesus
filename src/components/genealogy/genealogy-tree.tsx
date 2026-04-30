@@ -27,8 +27,8 @@ export function GenealogyTree() {
   const mainLineage = ancestors.filter(
     (a) => a.lineage === "main"
   );
-  const royalLine = ancestors.filter((a) => a.lineage === "royal");
-  const biologicalLine = ancestors.filter((a) => a.lineage === "biological");
+  const royalLine = ancestors.filter((a) => a.lineage === "royal" && !a.id.startsWith("jesus"));
+  const biologicalLine = ancestors.filter((a) => a.lineage === "biological" && !a.id.startsWith("jesus"));
   const jesus = ancestors.find((a) => a.id.startsWith("jesus"));
 
   return (
