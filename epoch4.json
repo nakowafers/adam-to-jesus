@@ -1,0 +1,433 @@
+{
+  "metadata": {
+    "date": "2025-05-14",
+    "sources": [
+      "Holy Bible, New Living Translation (NLT)",
+      "Luke 3:23-31",
+      "BibleGateway.com",
+      "BlueLetterBible.org"
+    ]
+  },
+  "data": [
+    {
+      "id": "nathan_luke",
+      "name": "Nathan",
+      "title": "Son of David",
+      "description": "A son of King David through whom the biological lineage of Jesus is traced in Luke's Gospel.",
+      "scripture_reference": "Luke 3:31 (NLT)",
+      "scripture_text": "Nathan was the son of David.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "mattatha_luke",
+      "name": "Mattatha",
+      "title": "Son of Nathan",
+      "description": "The son of Nathan and a grandson of King David.",
+      "scripture_reference": "Luke 3:31 (NLT)",
+      "scripture_text": "Mattatha was the son of Nathan.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "menna_luke",
+      "name": "Menna",
+      "title": "Son of Mattatha",
+      "description": "An ancestor of Jesus in the biological line recorded by Luke.",
+      "scripture_reference": "Luke 3:31 (NLT)",
+      "scripture_text": "Menna was the son of Mattatha.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "melea_luke",
+      "name": "Melea",
+      "title": "Son of Menna",
+      "description": "A descendant of David in the lineage leading to Jesus.",
+      "scripture_reference": "Luke 3:31 (NLT)",
+      "scripture_text": "Melea was the son of Menna.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "eliakim_luke",
+      "name": "Eliakim",
+      "title": "Son of Melea",
+      "description": "A member of the Davidic line through Nathan, distinct from the Eliakim in Matthew's royal line.",
+      "scripture_reference": "Luke 3:31 (NLT)",
+      "scripture_text": "Eliakim was the son of Melea.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "jonam_luke",
+      "name": "Jonam",
+      "title": "Son of Eliakim",
+      "description": "An ancestor of Jesus in the pre-exilic period of the Davidic lineage.",
+      "scripture_reference": "Luke 3:30 (NLT)",
+      "scripture_text": "Jonam was the son of Eliakim.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "joseph_luke_1",
+      "name": "Joseph",
+      "title": "Son of Jonam",
+      "description": "A descendant of David through Nathan, not to be confused with Joseph the husband of Mary.",
+      "scripture_reference": "Luke 3:30 (NLT)",
+      "scripture_text": "Joseph was the son of Jonam.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "judah_luke",
+      "name": "Judah",
+      "title": "Son of Joseph",
+      "description": "A member of the biological lineage of Jesus Christ as recorded in Luke.",
+      "scripture_reference": "Luke 3:30 (NLT)",
+      "scripture_text": "Judah was the son of Joseph.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "simeon_luke",
+      "name": "Simeon",
+      "title": "Son of Judah",
+      "description": "An ancestor of Jesus in the line of Nathan.",
+      "scripture_reference": "Luke 3:30 (NLT)",
+      "scripture_text": "Simeon was the son of Judah.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "levi_luke_1",
+      "name": "Levi",
+      "title": "Son of Simeon",
+      "description": "A member of the Davidic lineage, named after the forefather of the priestly tribe.",
+      "scripture_reference": "Luke 3:30 (NLT)",
+      "scripture_text": "Levi was the son of Simeon.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "matthat_luke_1",
+      "name": "Matthat",
+      "title": "Son of Levi",
+      "description": "An ancestor in the genealogy of Jesus, the first of two by this name in Luke's list.",
+      "scripture_reference": "Luke 3:29 (NLT)",
+      "scripture_text": "Jorim was the son of Matthat. Matthat was the son of Levi.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "jorim_luke",
+      "name": "Jorim",
+      "title": "Son of Matthat",
+      "description": "A descendant of Nathan and David in the lineage of Jesus.",
+      "scripture_reference": "Luke 3:29 (NLT)",
+      "scripture_text": "Jorim was the son of Matthat.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "eliezer_luke",
+      "name": "Eliezer",
+      "title": "Son of Jorim",
+      "description": "An ancestor of Jesus mentioned in the biological genealogy.",
+      "scripture_reference": "Luke 3:29 (NLT)",
+      "scripture_text": "Eliezer was the son of Jorim.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "joshua_luke",
+      "name": "Joshua",
+      "title": "Son of Eliezer",
+      "description": "A member of the Davidic line through Nathan, bearing the name of the great leader of Israel.",
+      "scripture_reference": "Luke 3:29 (NLT)",
+      "scripture_text": "Joshua was the son of Eliezer.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "er_luke",
+      "name": "Er",
+      "title": "Son of Joshua",
+      "description": "An ancestor in the genealogy of Jesus Christ recorded by Luke.",
+      "scripture_reference": "Luke 3:29 (NLT)",
+      "scripture_text": "Er was the son of Joshua.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "elmadam_luke",
+      "name": "Elmadam",
+      "title": "Son of Er",
+      "description": "A descendant of David in the lineage leading to Jesus.",
+      "scripture_reference": "Luke 3:28 (NLT)",
+      "scripture_text": "Cosam was the son of Elmadam. Elmadam was the son of Er.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "cosam_luke",
+      "name": "Cosam",
+      "title": "Son of Elmadam",
+      "description": "An ancestor of Jesus mentioned in the biological record of Luke.",
+      "scripture_reference": "Luke 3:28 (NLT)",
+      "scripture_text": "Cosam was the son of Elmadam.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "addi_luke",
+      "name": "Addi",
+      "title": "Son of Cosam",
+      "description": "A member of the lineage of David through Nathan.",
+      "scripture_reference": "Luke 3:28 (NLT)",
+      "scripture_text": "Addi was the son of Cosam.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "melki_luke_1",
+      "name": "Melki",
+      "title": "Son of Addi",
+      "description": "The first of two ancestors named Melki in Luke's genealogy.",
+      "scripture_reference": "Luke 3:28 (NLT)",
+      "scripture_text": "Melki was the son of Addi.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "neri_luke",
+      "name": "Neri",
+      "title": "Son of Melki",
+      "description": "An ancestor of Jesus and the father of Shealtiel in the biological line.",
+      "scripture_reference": "Luke 3:27 (NLT)",
+      "scripture_text": "Shealtiel was the son of Neri. Neri was the son of Melki.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "shealtiel_luke",
+      "name": "Shealtiel",
+      "title": "Son of Neri",
+      "description": "A key figure in the lineage who connected the line of Nathan to the line that would produce Zerubbabel.",
+      "scripture_reference": "Luke 3:27 (NLT)",
+      "scripture_text": "Zerubbabel was the son of Shealtiel. Shealtiel was the son of Neri.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "zerubbabel_luke",
+      "name": "Zerubbabel",
+      "title": "Son of Shealtiel",
+      "description": "The leader of the return from Babylon, appearing in both genealogies of Jesus.",
+      "scripture_reference": "Luke 3:27 (NLT)",
+      "scripture_text": "Rhesa was the son of Zerubbabel. Zerubbabel was the son of Shealtiel.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "rhesa_luke",
+      "name": "Rhesa",
+      "title": "Son of Zerubbabel",
+      "description": "The son of Zerubbabel and an ancestor of Jesus in the post-exilic period.",
+      "scripture_reference": "Luke 3:27 (NLT)",
+      "scripture_text": "Rhesa was the son of Zerubbabel.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "joanan_luke",
+      "name": "Joanan",
+      "title": "Son of Rhesa",
+      "description": "An ancestor of Jesus in the biological genealogy recorded by Luke.",
+      "scripture_reference": "Luke 3:27 (NLT)",
+      "scripture_text": "Joanan was the son of Rhesa.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "joda_luke",
+      "name": "Joda",
+      "title": "Son of Joanan",
+      "description": "A member of the Davidic line leading to Jesus.",
+      "scripture_reference": "Luke 3:26 (NLT)",
+      "scripture_text": "Josech was the son of Joda. Joda was the son of Joanan.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "josech_luke",
+      "name": "Josech",
+      "title": "Son of Joda",
+      "description": "An ancestor of Jesus in the lineage of Nathan.",
+      "scripture_reference": "Luke 3:26 (NLT)",
+      "scripture_text": "Josech was the son of Joda.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "semein_luke",
+      "name": "Semein",
+      "title": "Son of Josech",
+      "description": "A descendant of David in the genealogy of Jesus Christ.",
+      "scripture_reference": "Luke 3:26 (NLT)",
+      "scripture_text": "Mattathias was the son of Semein. Semein was the son of Josech.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "mattathias_luke_1",
+      "name": "Mattathias",
+      "title": "Son of Semein",
+      "description": "The first of two ancestors named Mattathias in this section of the genealogy.",
+      "scripture_reference": "Luke 3:26 (NLT)",
+      "scripture_text": "Maath was the son of Mattathias. Mattathias was the son of Semein.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "maath_luke",
+      "name": "Maath",
+      "title": "Son of Mattathias",
+      "description": "An ancestor of Jesus mentioned in the Gospel of Luke.",
+      "scripture_reference": "Luke 3:26 (NLT)",
+      "scripture_text": "Maath was the son of Mattathias.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "naggai_luke",
+      "name": "Naggai",
+      "title": "Son of Maath",
+      "description": "A member of the lineage of Jesus Christ in the post-exilic period.",
+      "scripture_reference": "Luke 3:25 (NLT)",
+      "scripture_text": "Esli was the son of Naggai. Naggai was the son of Maath.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "esli_luke",
+      "name": "Esli",
+      "title": "Son of Naggai",
+      "description": "An ancestor of Jesus in the Davidic line through Nathan.",
+      "scripture_reference": "Luke 3:25 (NLT)",
+      "scripture_text": "Esli was the son of Naggai.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "nahum_luke",
+      "name": "Nahum",
+      "title": "Son of Esli",
+      "description": "A descendant of David in the genealogy recorded by Luke.",
+      "scripture_reference": "Luke 3:25 (NLT)",
+      "scripture_text": "Amos was the son of Nahum. Nahum was the son of Esli.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "amos_luke",
+      "name": "Amos",
+      "title": "Son of Nahum",
+      "description": "An ancestor of Jesus Christ, not to be confused with the prophet Amos.",
+      "scripture_reference": "Luke 3:25 (NLT)",
+      "scripture_text": "Amos was the son of Nahum.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "mattathias_luke_2",
+      "name": "Mattathias",
+      "title": "Son of Amos",
+      "description": "The second ancestor named Mattathias in Luke's genealogy.",
+      "scripture_reference": "Luke 3:25 (NLT)",
+      "scripture_text": "Joseph was the son of Mattathias. Mattathias was the son of Amos.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "joseph_luke_2",
+      "name": "Joseph",
+      "title": "Son of Mattathias",
+      "description": "Another ancestor named Joseph in the lineage between David and the Messiah.",
+      "scripture_reference": "Luke 3:24 (NLT)",
+      "scripture_text": "Jannai was the son of Joseph. Joseph was the son of Mattathias.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "jannai_luke",
+      "name": "Jannai",
+      "title": "Son of Joseph",
+      "description": "A member of the pre-Messianic lineage of Jesus.",
+      "scripture_reference": "Luke 3:24 (NLT)",
+      "scripture_text": "Melki was the son of Jannai. Jannai was the son of Joseph.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "melki_luke_2",
+      "name": "Melki",
+      "title": "Son of Jannai",
+      "description": "The second ancestor named Melki in Luke's list, appearing late in the genealogy.",
+      "scripture_reference": "Luke 3:24 (NLT)",
+      "scripture_text": "Levi was the son of Melki. Melki was the son of Jannai.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "levi_luke_2",
+      "name": "Levi",
+      "title": "Son of Melki",
+      "description": "The second ancestor named Levi in the lineage recorded by Luke.",
+      "scripture_reference": "Luke 3:24 (NLT)",
+      "scripture_text": "Matthat was the son of Levi. Levi was the son of Melki.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "matthat_luke_2",
+      "name": "Matthat",
+      "title": "Son of Levi",
+      "description": "The father of Heli and grandfather of Joseph in the biological lineage of Jesus.",
+      "scripture_reference": "Luke 3:24 (NLT)",
+      "scripture_text": "Heli was the son of Matthat. Matthat was the son of Levi.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "heli_luke",
+      "name": "Heli",
+      "title": "Father of Joseph",
+      "description": "The father of Joseph (often understood as Mary's father, making him Joseph's father-in-law) in Luke's genealogy.",
+      "scripture_reference": "Luke 3:23 (NLT)",
+      "scripture_text": "Joseph was the son of Heli.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "joseph_luke",
+      "name": "Joseph",
+      "title": "Husband of Mary",
+      "description": "The legal father of Jesus, whose biological connection to David is traced through the line of Nathan in Luke's Gospel.",
+      "scripture_reference": "Luke 3:23 (NLT)",
+      "scripture_text": "Jesus was known as the son of Joseph. Joseph was the son of Heli.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    },
+    {
+      "id": "jesus_luke",
+      "name": "Jesus",
+      "title": "The Son of God",
+      "description": "The Messiah and Savior, whose earthly lineage is traced through Nathan back to David and Adam in Luke's Gospel.",
+      "scripture_reference": "Luke 3:23 (NLT)",
+      "scripture_text": "Jesus was about thirty years old when he began his public ministry.",
+      "lineage": "biological",
+      "epoch": "biological_line"
+    }
+  ]
+}

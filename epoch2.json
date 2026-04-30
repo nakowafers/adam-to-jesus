@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "date": "2025-05-14",
+    "sources": [
+      "Holy Bible, New Living Translation (NLT)",
+      "BibleGateway.com",
+      "Bible.com",
+      "Christianity.com",
+      "BibleStudyTools.com"
+    ]
+  },
+  "data": [
+    {
+      "id": "isaac",
+      "name": "Isaac",
+      "title": "Son of Abraham",
+      "description": "The son of promise born to Abraham and Sarah in their old age, and the second patriarch of Israel.",
+      "scripture_reference": "Genesis 25:19 (NLT)",
+      "scripture_text": "This is the account of the family of Isaac, the son of Abraham.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "jacob",
+      "name": "Jacob",
+      "title": "Father of the Twelve Tribes",
+      "description": "The son of Isaac who wrestled with God and was renamed Israel; he was the father of the twelve sons who became the tribes of Israel.",
+      "scripture_reference": "Genesis 25:26 (NLT)",
+      "scripture_text": "Then the other twin was born with his hand grasping Esau’s heel. So they named him Jacob. Isaac was sixty years old when the twins were born.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "judah",
+      "name": "Judah",
+      "title": "Son of Jacob",
+      "description": "The fourth son of Jacob and Leah, whose tribe was prophesied to hold the royal scepter of Israel.",
+      "scripture_reference": "Genesis 29:35 (NLT)",
+      "scripture_text": "Once again Leah became pregnant and gave birth to another son. She named him Judah, for she said, 'Now I will praise the Lord!' And then she stopped having children.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "perez",
+      "name": "Perez",
+      "title": "Son of Judah",
+      "description": "The son of Judah and Tamar, through whom the lineage leading to King David was continued.",
+      "scripture_reference": "Genesis 38:29 (NLT)",
+      "scripture_text": "But then he pulled back his hand, and out came his brother! 'What!' the midwife exclaimed. 'How did you break out first?' So he was named Perez.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "hezron",
+      "name": "Hezron",
+      "title": "Son of Perez",
+      "description": "A grandson of Judah and head of the Hezronite clan who settled in Egypt with the family of Jacob.",
+      "scripture_reference": "Ruth 4:18 (NLT)",
+      "scripture_text": "This is the genealogical record of their ancestor Perez: Perez was the father of Hezron.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "ram",
+      "name": "Ram",
+      "title": "Son of Hezron",
+      "description": "An ancestor of King David who lived during the time the Israelites were in Egypt.",
+      "scripture_reference": "Ruth 4:19 (NLT)",
+      "scripture_text": "Hezron was the father of Ram. Ram was the father of Amminadab.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "amminadab",
+      "name": "Amminadab",
+      "title": "Son of Ram",
+      "description": "The father of Nahshon and an ancestor in the royal line of Judah.",
+      "scripture_reference": "Ruth 4:19 (NLT)",
+      "scripture_text": "Ram was the father of Amminadab.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "nahshon",
+      "name": "Nahshon",
+      "title": "Leader of Judah",
+      "description": "The leader of the tribe of Judah during the Exodus and the wilderness wanderings.",
+      "scripture_reference": "Ruth 4:20 (NLT)",
+      "scripture_text": "Amminadab was the father of Nahshon. Nahshon was the father of Salmon.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "salmon",
+      "name": "Salmon",
+      "title": "Son of Nahshon",
+      "description": "The son of Nahshon who married Rahab and became the father of Boaz.",
+      "scripture_reference": "Ruth 4:20 (NLT)",
+      "scripture_text": "Nahshon was the father of Salmon.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "boaz",
+      "name": "Boaz",
+      "title": "Kinsman-Redeemer",
+      "description": "A wealthy and righteous man of Bethlehem who married Ruth the Moabite, serving as her kinsman-redeemer.",
+      "scripture_reference": "Ruth 4:21 (NLT)",
+      "scripture_text": "Salmon was the father of Boaz. Boaz was the father of Obed.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "obed",
+      "name": "Obed",
+      "title": "Son of Boaz and Ruth",
+      "description": "The son of Boaz and Ruth, and the grandfather of King David.",
+      "scripture_reference": "Ruth 4:21 (NLT)",
+      "scripture_text": "Boaz was the father of Obed.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "jesse",
+      "name": "Jesse",
+      "title": "Father of David",
+      "description": "A farmer in Bethlehem and the father of eight sons, the youngest of whom was chosen to be king.",
+      "scripture_reference": "Ruth 4:22 (NLT)",
+      "scripture_text": "Obed was the father of Jesse. Jesse was the father of David.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    },
+    {
+      "id": "david",
+      "name": "David",
+      "title": "King of Israel",
+      "description": "The shepherd boy who defeated Goliath and was anointed by Samuel to become Israel's greatest king.",
+      "scripture_reference": "1 Samuel 16:13 (NLT)",
+      "scripture_text": "So as David stood there among his brothers, Samuel took the flask of olive oil he had brought and anointed David with the oil. And the Spirit of the Lord came powerfully upon David from that day on.",
+      "lineage": "royal",
+      "epoch": "formation_of_israel"
+    }
+  ]
+}

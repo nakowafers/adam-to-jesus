@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "date": "2025-05-14",
+    "sources": [
+      "Holy Bible, New Living Translation (NLT)",
+      "BibleGateway.com",
+      "BlueLetterBible.org",
+      "BibleArchaeology.org"
+    ]
+  },
+  "data": [
+    {
+      "id": "adam",
+      "name": "Adam",
+      "title": "The First Man",
+      "description": "The first human being, created by God in His own image.",
+      "scripture_reference": "Genesis 5:3 (NLT)",
+      "scripture_text": "When Adam was 130 years old, he became the father of a son who was just like him—in his very image. He named his son Seth.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "seth",
+      "name": "Seth",
+      "title": "Son of Adam",
+      "description": "The third son of Adam and Eve, born after the death of Abel.",
+      "scripture_reference": "Genesis 5:6 (NLT)",
+      "scripture_text": "When Seth was 105 years old, he became the father of Enosh.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "enosh",
+      "name": "Enosh",
+      "title": "Son of Seth",
+      "description": "Son of Seth; in his time, people first began to worship the Lord by name.",
+      "scripture_reference": "Genesis 5:9 (NLT)",
+      "scripture_text": "When Enosh was 90 years old, he became the father of Kenan.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "kenan",
+      "name": "Kenan",
+      "title": "Son of Enosh",
+      "description": "Son of Enosh and a grandson of Seth.",
+      "scripture_reference": "Genesis 5:12 (NLT)",
+      "scripture_text": "When Kenan was 70 years old, he became the father of Mahalalel.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "mahalalel",
+      "name": "Mahalalel",
+      "title": "Son of Kenan",
+      "description": "The son of Kenan and father of Jared.",
+      "scripture_reference": "Genesis 5:15 (NLT)",
+      "scripture_text": "When Mahalalel was 65 years old, he became the father of Jared.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "jared",
+      "name": "Jared",
+      "title": "Son of Mahalalel",
+      "description": "The son of Mahalalel and father of Enoch.",
+      "scripture_reference": "Genesis 5:18 (NLT)",
+      "scripture_text": "When Jared was 162 years old, he became the father of Enoch.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "enoch",
+      "name": "Enoch",
+      "title": "One Who Walked with God",
+      "description": "A man who walked faithfully with God and was taken by God without dying.",
+      "scripture_reference": "Genesis 5:21 (NLT)",
+      "scripture_text": "When Enoch was 65 years old, he became the father of Methuselah.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "methuselah",
+      "name": "Methuselah",
+      "title": "Longest Living Man",
+      "description": "The son of Enoch and the person with the longest lifespan recorded in the Bible.",
+      "scripture_reference": "Genesis 5:25 (NLT)",
+      "scripture_text": "When Methuselah was 187 years old, he became the father of Lamech.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "lamech",
+      "name": "Lamech",
+      "title": "Son of Methuselah",
+      "description": "The son of Methuselah and father of Noah.",
+      "scripture_reference": "Genesis 5:28-29 (NLT)",
+      "scripture_text": "When Lamech was 182 years old, he became the father of a son. He named him Noah, for he said, 'May he bring us relief from our work and the painful labor of farming this ground that the Lord has cursed.'",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "noah",
+      "name": "Noah",
+      "title": "Builder of the Ark",
+      "description": "The righteous man who built an ark to save his family and animals from the Great Flood.",
+      "scripture_reference": "Genesis 5:32 (NLT)",
+      "scripture_text": "After Noah was 500 years old, he became the father of Shem, Ham, and Japheth.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "shem",
+      "name": "Shem",
+      "title": "Son of Noah",
+      "description": "One of the three sons of Noah and the ancestor of the Semitic peoples.",
+      "scripture_reference": "Genesis 11:10 (NLT)",
+      "scripture_text": "This is the account of Shem’s family. Two years after the great flood, when Shem was 100 years old, he became the father of Arphaxad.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "arphaxad",
+      "name": "Arphaxad",
+      "title": "Son of Shem",
+      "description": "The son of Shem, born two years after the Great Flood.",
+      "scripture_reference": "Genesis 11:12 (NLT)",
+      "scripture_text": "When Arphaxad was 35 years old, he became the father of Shelah.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "shelah",
+      "name": "Shelah",
+      "title": "Son of Arphaxad",
+      "description": "The son of Arphaxad and father of Eber.",
+      "scripture_reference": "Genesis 11:14 (NLT)",
+      "scripture_text": "When Shelah was 30 years old, he became the father of Eber.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "eber",
+      "name": "Eber",
+      "title": "Ancestor of the Hebrews",
+      "description": "The son of Shelah and the person from whom the name 'Hebrew' is often thought to be derived.",
+      "scripture_reference": "Genesis 11:16 (NLT)",
+      "scripture_text": "When Eber was 34 years old, he became the father of Peleg.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "peleg",
+      "name": "Peleg",
+      "title": "Son of Eber",
+      "description": "Son of Eber; during his lifetime the earth was divided.",
+      "scripture_reference": "Genesis 11:18 (NLT)",
+      "scripture_text": "When Peleg was 30 years old, he became the father of Reu.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "reu",
+      "name": "Reu",
+      "title": "Son of Peleg",
+      "description": "The son of Peleg and father of Serug.",
+      "scripture_reference": "Genesis 11:20 (NLT)",
+      "scripture_text": "When Reu was 32 years old, he became the father of Serug.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "serug",
+      "name": "Serug",
+      "title": "Son of Reu",
+      "description": "The son of Reu and father of Nahor.",
+      "scripture_reference": "Genesis 11:22 (NLT)",
+      "scripture_text": "When Serug was 30 years old, he became the father of Nahor.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "nahor",
+      "name": "Nahor",
+      "title": "Son of Serug",
+      "description": "The son of Serug and father of Terah.",
+      "scripture_reference": "Genesis 11:24 (NLT)",
+      "scripture_text": "When Nahor was 29 years old, he became the father of Terah.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "terah",
+      "name": "Terah",
+      "title": "Father of Abraham",
+      "description": "The son of Nahor who moved his family from Ur of the Chaldeans toward Canaan.",
+      "scripture_reference": "Genesis 11:26 (NLT)",
+      "scripture_text": "After Terah was 70 years old, he became the father of Abram, Nahor, and Haran.",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    },
+    {
+      "id": "abraham",
+      "name": "Abraham",
+      "title": "Father of Many Nations",
+      "description": "Originally named Abram, he was called by God to leave his home and become the father of a great nation.",
+      "scripture_reference": "Genesis 12:1 (NLT)",
+      "scripture_text": "The Lord had said to Abram, 'Leave your native country, your relatives, and your father’s family, and go to the land that I will show you.'",
+      "lineage": "royal",
+      "epoch": "early_patriarchs"
+    }
+  ]
+}

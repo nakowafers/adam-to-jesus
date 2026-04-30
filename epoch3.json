@@ -1,0 +1,283 @@
+{
+  "metadata": {
+    "date": "2025-05-14",
+    "sources": [
+      "Holy Bible, New Living Translation (NLT)",
+      "Matthew 1:6-16",
+      "BibleGateway.com",
+      "BlueLetterBible.org"
+    ]
+  },
+  "data": [
+    {
+      "id": "solomon",
+      "name": "Solomon",
+      "title": "King of Israel",
+      "description": "The son of David and Bathsheba, renowned for his wisdom and for building the first Temple in Jerusalem.",
+      "scripture_reference": "Matthew 1:6 (NLT)",
+      "scripture_text": "David was the father of Solomon (whose mother was Bathsheba, the widow of Uriah).",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "rehoboam",
+      "name": "Rehoboam",
+      "title": "King of Judah",
+      "description": "The son of Solomon whose rejection of the people's request for lighter taxes led to the division of the kingdom.",
+      "scripture_reference": "Matthew 1:7 (NLT)",
+      "scripture_text": "Solomon was the father of Rehoboam. Rehoboam was the father of Abijah. Abijah was the father of Asa.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "abijah",
+      "name": "Abijah",
+      "title": "King of Judah",
+      "description": "The son of Rehoboam who reigned over Judah and continued the war against the northern kingdom of Israel.",
+      "scripture_reference": "Matthew 1:7 (NLT)",
+      "scripture_text": "Solomon was the father of Rehoboam. Rehoboam was the father of Abijah. Abijah was the father of Asa.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "asa",
+      "name": "Asa",
+      "title": "King of Judah",
+      "description": "A king of Judah who was noted for his early religious reforms and his heart being fully committed to the Lord.",
+      "scripture_reference": "Matthew 1:8 (NLT)",
+      "scripture_text": "Asa was the father of Jehoshaphat. Jehoshaphat was the father of Jehoram. Jehoram was the father of Uzziah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "jehoshaphat",
+      "name": "Jehoshaphat",
+      "title": "King of Judah",
+      "description": "The son of Asa who strengthened Judah and walked in the ways of his father by seeking the Lord.",
+      "scripture_reference": "Matthew 1:8 (NLT)",
+      "scripture_text": "Asa was the father of Jehoshaphat. Jehoshaphat was the father of Jehoram. Jehoram was the father of Uzziah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "jehoram",
+      "name": "Jehoram",
+      "title": "King of Judah",
+      "description": "The son of Jehoshaphat who married Athaliah, the daughter of Ahab, and led Judah into idolatry.",
+      "scripture_reference": "Matthew 1:8 (NLT)",
+      "scripture_text": "Asa was the father of Jehoshaphat. Jehoshaphat was the father of Jehoram. Jehoram was the father of Uzziah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "uzziah",
+      "name": "Uzziah",
+      "title": "King of Judah",
+      "description": "Also known as Azariah, he was a powerful king who reigned for fifty-two years but was later struck with leprosy.",
+      "scripture_reference": "Matthew 1:9 (NLT)",
+      "scripture_text": "Uzziah was the father of Jotham. Jotham was the father of Ahaz. Ahaz was the father of Hezekiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "jotham",
+      "name": "Jotham",
+      "title": "King of Judah",
+      "description": "The son of Uzziah who grew powerful because he walked steadfastly before the Lord his God.",
+      "scripture_reference": "Matthew 1:9 (NLT)",
+      "scripture_text": "Uzziah was the father of Jotham. Jotham was the father of Ahaz. Ahaz was the father of Hezekiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "ahaz",
+      "name": "Ahaz",
+      "title": "King of Judah",
+      "description": "A wicked king of Judah who refused to trust in God and instead sought help from the king of Assyria.",
+      "scripture_reference": "Matthew 1:9 (NLT)",
+      "scripture_text": "Uzziah was the father of Jotham. Jotham was the father of Ahaz. Ahaz was the father of Hezekiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "hezekiah",
+      "name": "Hezekiah",
+      "title": "King of Judah",
+      "description": "One of the most prominent kings of Judah, known for his religious reforms and his reliance on God during the Assyrian siege.",
+      "scripture_reference": "Matthew 1:10 (NLT)",
+      "scripture_text": "Hezekiah was the father of Manasseh. Manasseh was the father of Amon. Amon was the father of Josiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "manasseh",
+      "name": "Manasseh",
+      "title": "King of Judah",
+      "description": "The son of Hezekiah who reigned longer than any other king of Judah; he was initially wicked but repented in captivity.",
+      "scripture_reference": "Matthew 1:10 (NLT)",
+      "scripture_text": "Hezekiah was the father of Manasseh. Manasseh was the father of Amon. Amon was the father of Josiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "amon",
+      "name": "Amon",
+      "title": "King of Judah",
+      "description": "The son of Manasseh who abandoned the Lord and was assassinated by his own officials after a short reign.",
+      "scripture_reference": "Matthew 1:10 (NLT)",
+      "scripture_text": "Hezekiah was the father of Manasseh. Manasseh was the father of Amon. Amon was the father of Josiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "josiah",
+      "name": "Josiah",
+      "title": "King of Judah",
+      "description": "The boy-king who initiated a major reformation after the Book of the Law was found in the Temple.",
+      "scripture_reference": "Matthew 1:11 (NLT)",
+      "scripture_text": "Josiah was the father of Jehoiachin and his brothers (born at the time of the exile to Babylon).",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "jehoiachin",
+      "name": "Jehoiachin",
+      "title": "King of Judah",
+      "description": "The son of Jehoiakim (called Jehoiachin in Matthew) who was taken captive to Babylon; he is the last king in the royal line before the exile.",
+      "scripture_reference": "Matthew 1:11 (NLT)",
+      "scripture_text": "Josiah was the father of Jehoiachin and his brothers (born at the time of the exile to Babylon).",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "shealtiel_matthew",
+      "name": "Shealtiel",
+      "title": "Son of Jehoiachin",
+      "description": "The son of Jehoiachin, born during the Babylonian exile, through whom the Davidic line continued.",
+      "scripture_reference": "Matthew 1:12 (NLT)",
+      "scripture_text": "After the Babylonian exile: Jehoiachin was the father of Shealtiel. Shealtiel was the father of Zerubbabel.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "zerubbabel_matthew",
+      "name": "Zerubbabel",
+      "title": "Governor of Judah",
+      "description": "The leader of the first return of exiles from Babylon who laid the foundation of the second Temple.",
+      "scripture_reference": "Matthew 1:13 (NLT)",
+      "scripture_text": "Zerubbabel was the father of Abiud. Abiud was the father of Eliakim. Eliakim was the father of Azor.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "abiud",
+      "name": "Abiud",
+      "title": "Son of Zerubbabel",
+      "description": "An ancestor of Jesus in the royal line of David following the return from Babylonian exile.",
+      "scripture_reference": "Matthew 1:13 (NLT)",
+      "scripture_text": "Zerubbabel was the father of Abiud. Abiud was the father of Eliakim. Eliakim was the father of Azor.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "eliakim_matthew",
+      "name": "Eliakim",
+      "title": "Son of Abiud",
+      "description": "An ancestor in the royal genealogy of Jesus Christ, as recorded by the Apostle Matthew.",
+      "scripture_reference": "Matthew 1:13 (NLT)",
+      "scripture_text": "Zerubbabel was the father of Abiud. Abiud was the father of Eliakim. Eliakim was the father of Azor.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "azor",
+      "name": "Azor",
+      "title": "Son of Eliakim",
+      "description": "A descendant of David in the royal line leading to the Messiah.",
+      "scripture_reference": "Matthew 1:14 (NLT)",
+      "scripture_text": "Azor was the father of Zadok. Zadok was the father of Akim. Akim was the father of Eliud.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "zadok_matthew",
+      "name": "Zadok",
+      "title": "Son of Azor",
+      "description": "An ancestor of Jesus Christ, not to be confused with the high priests of the same name.",
+      "scripture_reference": "Matthew 1:14 (NLT)",
+      "scripture_text": "Azor was the father of Zadok. Zadok was the father of Akim. Akim was the father of Eliud.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "akim",
+      "name": "Akim",
+      "title": "Son of Zadok",
+      "description": "An ancestor of Jesus in the lineage of the kings of Judah.",
+      "scripture_reference": "Matthew 1:14 (NLT)",
+      "scripture_text": "Azor was the father of Zadok. Zadok was the father of Akim. Akim was the father of Eliud.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "eliud",
+      "name": "Eliud",
+      "title": "Son of Akim",
+      "description": "A descendant of David whose name appears in the genealogy of Jesus in Matthew's Gospel.",
+      "scripture_reference": "Matthew 1:15 (NLT)",
+      "scripture_text": "Eliud was the father of Eleazar. Eleazar was the father of Matthan. Matthan was the father of Jacob.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "eleazar_matthew",
+      "name": "Eleazar",
+      "title": "Son of Eliud",
+      "description": "An ancestor of Joseph, the husband of Mary, in the Davidic royal line.",
+      "scripture_reference": "Matthew 1:15 (NLT)",
+      "scripture_text": "Eliud was the father of Eleazar. Eleazar was the father of Matthan. Matthan was the father of Jacob.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "matthan",
+      "name": "Matthan",
+      "title": "Son of Eleazar",
+      "description": "The grandfather of Joseph, the husband of Mary, in the royal genealogy of Jesus.",
+      "scripture_reference": "Matthew 1:15 (NLT)",
+      "scripture_text": "Eliud was the father of Eleazar. Eleazar was the father of Matthan. Matthan was the father of Jacob.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "jacob_matthew",
+      "name": "Jacob",
+      "title": "Father of Joseph",
+      "description": "The son of Matthan and father of Joseph the husband of Mary, representing the final generation before the birth of Christ in Matthew's record.",
+      "scripture_reference": "Matthew 1:16 (NLT)",
+      "scripture_text": "Jacob was the father of Joseph, the husband of Mary. Mary gave birth to Jesus, who is called the Messiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "joseph_matthew",
+      "name": "Joseph",
+      "title": "Husband of Mary",
+      "description": "A descendant of King David and a righteous man who served as the legal father of Jesus on earth.",
+      "scripture_reference": "Matthew 1:16 (NLT)",
+      "scripture_text": "Jacob was the father of Joseph, the husband of Mary. Mary gave birth to Jesus, who is called the Messiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    },
+    {
+      "id": "jesus_matthew",
+      "name": "Jesus",
+      "title": "The Messiah",
+      "description": "The Son of God and Savior of the world, born of the Virgin Mary, the ultimate fulfillment of the Davidic royal line.",
+      "scripture_reference": "Matthew 1:16 (NLT)",
+      "scripture_text": "Jacob was the father of Joseph, the husband of Mary. Mary gave birth to Jesus, who is called the Messiah.",
+      "lineage": "royal",
+      "epoch": "royal_line"
+    }
+  ]
+}
