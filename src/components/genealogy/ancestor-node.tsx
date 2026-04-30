@@ -8,9 +8,11 @@ interface AncestorNodeProps {
   onClick: (ancestor: Ancestor) => void;
   index: number;
   compact?: boolean;
+  isSelected?: boolean;
+  id?: string;
 }
 
-export function AncestorNode({ ancestor, onClick, index, compact = false }: AncestorNodeProps) {
+export function AncestorNode({ ancestor, onClick, index, compact = false, isSelected = false, id }: AncestorNodeProps) {
   const getLineageColor = () => {
     switch (ancestor.lineage) {
       case "royal":
@@ -36,12 +38,15 @@ export function AncestorNode({ ancestor, onClick, index, compact = false }: Ance
   if (compact) {
     return (
       <motion.button
+        id={id}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: index * 0.1 }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onClick(ancestor)}
+        aria-label={`View details for ${ancestor.name}, ${ancestor.title}`}
+        aria-expanded={isSelected}
         className={`group relative w-full cursor-pointer rounded-lg border border-zinc-800 bg-zinc-900/80 px-3 py-2.5 text-left backdrop-blur-sm transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900 hover:shadow-lg ${getLineageGlow()}`}
       >
         <div className="flex items-center gap-2">
@@ -78,12 +83,15 @@ export function AncestorNode({ ancestor, onClick, index, compact = false }: Ance
 
   return (
     <motion.button
+      id={id}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(ancestor)}
+      aria-label={`View details for ${ancestor.name}, ${ancestor.title}`}
+      aria-expanded={isSelected}
       className={`group relative w-full cursor-pointer rounded-lg border border-zinc-800 bg-zinc-900/80 p-4 text-left backdrop-blur-sm transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900 hover:shadow-lg ${getLineageGlow()}`}
     >
       <div className="flex items-center gap-3">
