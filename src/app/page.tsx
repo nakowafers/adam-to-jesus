@@ -11,8 +11,15 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="min-h-screen bg-black">
-        <GenealogyTree />
+      <main className="min-h-screen bg-black flex flex-col">
+        <div className="flex-1">
+          <GenealogyTree />
+        </div>
+        <footer className="py-8 flex justify-center items-center border-t border-zinc-900 bg-black/50 backdrop-blur-sm">
+          <p className="text-zinc-500 text-sm font-medium tracking-wide">
+            Created with faith, by Nicola <span role="img" aria-label="cross" className="ml-1 text-zinc-400">✝️</span>
+          </p>
+        </footer>
       </main>
     </>
   );
