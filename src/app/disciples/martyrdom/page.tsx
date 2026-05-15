@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { getDisciples } from '@/lib/disciples';
 import { MartyrdomContainer } from '@/components/disciples/martyrdom-container';
 import { History, Bookmark, ChevronRight } from 'lucide-react';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 
 export const runtime = 'edge';
 
@@ -12,9 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default async function MartyrdomPage() {
-  // Cloudflare D1 Binding accessed via process.env in Next.js Edge Runtime
-  const db = (process.env as unknown as { DB: unknown }).DB;
-  const disciples = await getDisciples(db);
+  // Access Cloudflare D1 Binding using the OpenNext context helper
+  const { env } = await getCloudflareContext();
+  const disciples = await getDisciples(env.DB);
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] selection:bg-[#D4AF37]/30 selection:text-[#0A0A0A]">
