@@ -14,10 +14,26 @@ export const metadata: Metadata = {
 };
 
 export default async function MartyrdomPage() {
-  // Access Cloudflare D1 Binding using the OpenNext context helper
-  const context = await getCloudflareContext({ async: true });
-  const env = context.env as { DB: unknown };
-  const disciples = await getDisciples(env.DB);
+  let disciples: any[] = [];
+  try {
+    const context = await getCloudflareContext({ async: true });
+    const env = context.env as { DB: any };
+    console.log("Cloudflare Context DB:", !!env?.DB);
+    disciples = await getDisciples(env?.DB);
+  } catch (e) {
+    console.error("Failed to fetch from D1, using fallback:", e);
+    // Fallback data for debugging
+    disciples = [
+      { id: 'peter', name: 'Simon Peter', year_of_death: '64 AD', location_of_death: 'Rome', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High' }
+    ];
+  }
+
+  // If still empty after trying D1, use the debug fallback
+  if (disciples.length === 0) {
+    disciples = [
+      { id: 'peter', name: 'Simon Peter', year_of_death: '64 AD', location_of_death: 'Rome', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High' }
+    ];
+  }
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] selection:bg-[#D4AF37]/30 selection:text-[#0A0A0A]">
