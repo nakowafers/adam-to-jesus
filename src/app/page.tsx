@@ -5,14 +5,15 @@ import { fullAncestors } from "@/lib/lineage-data";
 import { getGenealogyJsonLd } from "@/lib/json-ld";
 import { KofiOverlay } from "@/components/ui/kofi-overlay";
 
-export default function Home() {
-  const jsonLd = getGenealogyJsonLd(fullAncestors);
+const jsonLd = getGenealogyJsonLd(fullAncestors);
+const jsonLdString = JSON.stringify(jsonLd);
 
+export default function Home() {
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString }}
       />
       <KofiOverlay />
       <main className="min-h-screen bg-black flex flex-col">
