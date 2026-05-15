@@ -1,0 +1,10 @@
+name = "adam-to-jesus"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lineage-db"
+database_id = "5bfb9c67-345b-4842-bca1-365d3aa9008a"
+migrations_dir = "migrations"
