@@ -5,7 +5,8 @@ import { MartyrdomContainer } from '@/components/disciples/martyrdom-container';
 import { History, Bookmark, ChevronRight } from 'lucide-react';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Martyrdom of the Disciples',
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
 
 export default async function MartyrdomPage() {
   // Access Cloudflare D1 Binding using the OpenNext context helper
-  const { env } = await getCloudflareContext();
+  const context = await getCloudflareContext({ async: true });
+  const env = context.env as { DB: unknown };
   const disciples = await getDisciples(env.DB);
 
   return (

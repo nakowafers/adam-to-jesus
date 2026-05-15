@@ -2,9 +2,17 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "adam-to-jesus",
-  "compatibility_date": "2026-04-30",
+  "compatibility_date": "2026-05-11",
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lineage-db",
+      "database_id": "5bfb9c67-345b-4842-bca1-365d3aa9008a",
+      "migrations_dir": "migrations"
+    }
   ],
   "assets": {
     "directory": ".open-next/assets",
