@@ -8,9 +8,9 @@ export function KofiOverlay() {
       src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"
       strategy="afterInteractive"
       onLoad={() => {
-        // @ts-ignore
+        // @ts-expect-error: kofiWidgetOverlay is globally injected
         if (typeof kofiWidgetOverlay !== 'undefined') {
-          // @ts-ignore
+          // @ts-expect-error: kofiWidgetOverlay is globally injected
           kofiWidgetOverlay.draw('nakowafers', {
             'type': 'floating-chat',
             'floating-chat.donateButton.text': 'Support me',
