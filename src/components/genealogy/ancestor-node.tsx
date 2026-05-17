@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { Ancestor } from "@/lib/genealogy-data";
+import { memo } from "react";
 
 interface AncestorNodeProps {
   ancestor: Ancestor;
@@ -12,7 +13,11 @@ interface AncestorNodeProps {
   id?: string;
 }
 
-export function AncestorNode({ ancestor, onClick, index, compact = false, isSelected = false, id }: AncestorNodeProps) {
+/**
+ * ⚡ Bolt: Memoize AncestorNode to prevent unnecessary re-renders of the entire tree
+ * when unrelated state changes (like drawer open/close) occur in the parent component.
+ */
+export const AncestorNode = memo(function AncestorNode({ ancestor, onClick, index, compact = false, isSelected = false, id }: AncestorNodeProps) {
   const getLineageColor = () => {
     switch (ancestor.lineage) {
       case "royal":
@@ -127,4 +132,4 @@ export function AncestorNode({ ancestor, onClick, index, compact = false, isSele
       </div>
     </motion.button>
   );
-}
+});
