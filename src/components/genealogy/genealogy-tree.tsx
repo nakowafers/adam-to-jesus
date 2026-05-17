@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { fullAncestors as ancestors, type Ancestor } from "@/lib/lineage-data";
 import { AncestorNode } from "./ancestor-node";
@@ -22,14 +22,14 @@ export function GenealogyTree() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  const handleNodeClick = (ancestor: Ancestor) => {
+  const handleNodeClick = useCallback((ancestor: Ancestor) => {
     setSelectedAncestor(ancestor);
     setIsDrawerOpen(true);
-  };
+  }, []);
 
-  const handleCloseDrawer = () => {
+  const handleCloseDrawer = useCallback(() => {
     setIsDrawerOpen(false);
-  };
+  }, []);
 
   return (
     <>
