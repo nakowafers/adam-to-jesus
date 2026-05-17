@@ -87,4 +87,3 @@ edges.forEach(e => {
 });
 
 fs.writeFileSync('seed.sql', sql);
-console.log('seed.sql re-generated for 300px width.');
