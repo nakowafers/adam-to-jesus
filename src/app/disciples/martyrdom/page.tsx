@@ -50,10 +50,18 @@ export default async function MartyrdomPage() {
             </h1>
           </div>
           <div className="hidden md:flex items-center gap-5 text-[#D4AF37]">
-            <button className="p-2.5 bg-[#18181B] border border-[#27272A] rounded-full hover:border-[#D4AF37]/50 transition-all active:scale-90">
+            <button
+              aria-label="View history"
+              title="View history"
+              className="p-2.5 bg-[#18181B] border border-[#27272A] rounded-full hover:border-[#D4AF37]/50 transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0A]"
+            >
               <History size={18} />
             </button>
-            <button className="p-2.5 bg-[#18181B] border border-[#27272A] rounded-full hover:border-[#D4AF37]/50 transition-all active:scale-90">
+            <button
+              aria-label="View bookmarks"
+              title="View bookmarks"
+              className="p-2.5 bg-[#18181B] border border-[#27272A] rounded-full hover:border-[#D4AF37]/50 transition-all active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0A0A]"
+            >
               <Bookmark size={18} />
             </button>
           </div>
