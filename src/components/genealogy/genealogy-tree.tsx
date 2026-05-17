@@ -7,6 +7,14 @@ import { AncestorNode } from "./ancestor-node";
 import { AncestorDrawer } from "./ancestor-drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// Separate ancestors by lineage outside the component to avoid recalculation on every render
+const mainLineage = ancestors.filter(
+  (a) => a.lineage === "main"
+);
+const royalLine = ancestors.filter((a) => a.lineage === "royal" && !a.id.startsWith("jesus"));
+const biologicalLine = ancestors.filter((a) => a.lineage === "biological" && !a.id.startsWith("jesus"));
+const jesus = ancestors.find((a) => a.id.startsWith("jesus"));
+
 export function GenealogyTree() {
   const [selectedAncestor, setSelectedAncestor] = useState<Ancestor | null>(
     null
@@ -22,14 +30,6 @@ export function GenealogyTree() {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
   };
-
-  // Separate ancestors by lineage
-  const mainLineage = ancestors.filter(
-    (a) => a.lineage === "main"
-  );
-  const royalLine = ancestors.filter((a) => a.lineage === "royal" && !a.id.startsWith("jesus"));
-  const biologicalLine = ancestors.filter((a) => a.lineage === "biological" && !a.id.startsWith("jesus"));
-  const jesus = ancestors.find((a) => a.id.startsWith("jesus"));
 
   return (
     <>
