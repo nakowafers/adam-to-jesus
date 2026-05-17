@@ -42,7 +42,7 @@ export function AncestorNode({ ancestor, onClick, index, compact = false, isSele
         type="button"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.02 }}
+        transition={{ duration: 0.4, delay: index * 0.1 }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onClick(ancestor)}
@@ -88,7 +88,7 @@ export function AncestorNode({ ancestor, onClick, index, compact = false, isSele
       type="button"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.02 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(ancestor)}
