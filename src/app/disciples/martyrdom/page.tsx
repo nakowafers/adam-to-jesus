@@ -1,6 +1,6 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getDisciples } from '@/lib/disciples';
+import { getDisciples, type Disciple } from '@/lib/disciples';
 import { MartyrdomContainer } from '@/components/disciples/martyrdom-container';
 import { History, Bookmark, ChevronRight } from 'lucide-react';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
@@ -37,7 +37,7 @@ export default async function MartyrdomPage() {
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] selection:bg-[#D4AF37]/30 selection:text-[#0A0A0A]">
-      <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-[#18181B] py-6 px-6 md:px-8">
+      <header className="sticky top-[44px] z-40 bg-black/80 backdrop-blur-xl border-b border-[#18181B] py-6 px-6 md:px-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="space-y-1">
             <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#A1A1AA]">

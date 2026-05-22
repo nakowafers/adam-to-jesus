@@ -20,11 +20,33 @@ The application provides a responsive, interactive UI using smooth animations to
 
 ## Core Structure
 
-- `src/app/`: Contains the Next.js App Router entry points (e.g., `page.tsx`, `layout.tsx`).
+- `src/app/`: Next.js App Router entry points.
+  - `layout.tsx` — Root layout (includes shared `SiteHeader`)
+  - `page.tsx` — Landing page hub with card grid navigation
+  - `lineage/page.tsx` — Interactive genealogy tree (Adam to Jesus)
+  - `disciples/martyrdom/page.tsx` — Martyrdom of the Disciples
+  - `sitemap.ts` — Automated sitemap generation
+- `src/components/site-header.tsx`: Shared site-wide navigation header.
 - `src/components/genealogy/`: Core UI components for rendering the genealogy tree, such as `genealogy-tree.tsx`, `ancestor-node.tsx`, and `ancestor-drawer.tsx`.
-- `src/components/ui/`: Reusable UI components based on Radix UI.
+- `src/components/disciples/`: Martyrdom page components (apostolic cards, drawers, gauges).
+- `src/components/ui/`: Reusable UI components based on Radix UI (shadcn/ui).
 - `src/lib/`: Application logic, database access (`db.ts`), and static data models (`lineage-data.ts`, `genealogy-data.ts`).
 - `scripts/`: Utilities for generating seeds and initializing the local database.
+- `tests/`: End-to-end smoke tests (Playwright).
+
+## Route Map
+
+| Path | Page | Description |
+|---|---|---|
+| `/` | Landing page | Site hub with card grid linking to all sections |
+| `/lineage` | Lineage page | Interactive genealogy tree from Adam to Jesus |
+| `/disciples/martyrdom` | Martyrdom page | Martyrdom records of the 12 disciples |
+
+## Shared Navigation
+
+The project uses a two-level header system:
+1. **SiteHeader** (`src/components/site-header.tsx`) — Rendered in the root layout. A thin (~44px), sticky top bar displaying "From Adam to Jesus" as a home link. Present on every page.
+2. **Page-specific headers** — Individual pages (e.g., martyrdom) may have their own sticky headers for page-level navigation (breadcrumbs, action buttons). These are positioned below the SiteHeader using `top-[44px]`.
 
 ## Current Data Flow
 

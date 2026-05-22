@@ -24,8 +24,14 @@ export function ApostolicCard({ disciple, onSelect, isSelected }: ApostolicCardP
   const roundedScore = Math.round(normalizedScore);
 
   return (
-    <motion.button
+    <motion.div
       onClick={() => onSelect(disciple)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(disciple);
+        }
+      }}
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
       className={`
@@ -35,6 +41,8 @@ export function ApostolicCard({ disciple, onSelect, isSelected }: ApostolicCardP
           ? 'border-[#D4AF37] ring-1 ring-[#D4AF37]' 
           : 'border-[#27272A] hover:border-[#D4AF37]/40'}
       `}
+      role="button"
+      tabIndex={0}
       aria-pressed={isSelected}
     >
       <div className="flex items-start gap-5">
@@ -56,7 +64,7 @@ export function ApostolicCard({ disciple, onSelect, isSelected }: ApostolicCardP
           <div className="flex items-center gap-1.5 mt-2.5 text-[#A1A1AA]">
             <MapPin size={12} className="text-[#D4AF37]" />
             <span className="text-[10px] font-bold uppercase tracking-widest">
-              {disciple.location_of_death.split(',')[0]}
+              {(disciple.location_of_death?.split(',')[0] ?? '')}
             </span>
           </div>
         </div>
@@ -109,6 +117,6 @@ export function ApostolicCard({ disciple, onSelect, isSelected }: ApostolicCardP
           className="absolute top-3 right-3 w-1.5 h-1.5 bg-[#D4AF37] rounded-full"
         />
       )}
-    </motion.button>
+    </motion.div>
   );
 }
