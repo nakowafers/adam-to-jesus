@@ -14,24 +14,23 @@ export const metadata: Metadata = {
 };
 
 export default async function MartyrdomPage() {
-  let disciples: any[] = [];
+  let disciples: Disciple[] = [];
   try {
     const context = await getCloudflareContext({ async: true });
     const env = context.env as { DB: any };
-    console.log("Cloudflare Context DB:", !!env?.DB);
     disciples = await getDisciples(env?.DB);
   } catch (e) {
     console.error("Failed to fetch from D1, using fallback:", e);
     // Fallback data for debugging
     disciples = [
-      { id: 'peter', name: 'Simon Peter', year_of_death: '64 AD', location_of_death: 'Rome', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High' }
+      { id: 'peter', name: 'Simon Peter', symbol: 'cross', year_of_death: '64 AD', location_of_death: 'Rome', method_of_death: 'Crucifixion', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High', scripture_reference: 'N/A' }
     ];
   }
 
   // If still empty after trying D1, use the debug fallback
   if (disciples.length === 0) {
     disciples = [
-      { id: 'peter', name: 'Simon Peter', year_of_death: '64 AD', location_of_death: 'Rome', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High' }
+      { id: 'peter', name: 'Simon Peter', symbol: 'cross', year_of_death: '64 AD', location_of_death: 'Rome', method_of_death: 'Crucifixion', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High', scripture_reference: 'N/A' }
     ];
   }
 
