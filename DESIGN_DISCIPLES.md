@@ -59,7 +59,7 @@ The palette is a high-contrast, research-focused dark mode.
 The following improvements have been integrated into the system to achieve the "Modern Scholar" standard:
 
 *   **Responsive Fluidity:** The layout now transitions from a single-column stack on mobile to a multi-column grid on desktop, ensuring a seamless experience across all devices.
-*   **Sticky Header Navigation:** A blurred, sticky header provides persistent access to breadcrumbs (`Apostles > Martyrdom`) and placeholder research tools (History, Bookmark).
+*   **Two-Level Header System:** A shared site-level header (thin, ~44px, brand link to `/`) is rendered in the root layout. Below it, the page-specific sticky header provides breadcrumbs (`Apostles > Martyrdom`) and placeholder research tools (History, Bookmark). The page header uses `top-[44px]` to sit below the site header.
 *   **Framer Motion Orchestration:** Spring-based animations for the drawer transitions and layout-id-based indicators for card selection.
 *   **A11y & Focus:** Enhanced high-contrast selection states and clear keyboard navigation paths.
 

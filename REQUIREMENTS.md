@@ -16,7 +16,12 @@ Autonomously develop and maintain a high-fidelity, interactive, and academically
 - **Node Interaction:** Clicking an ancestor/disciple node must trigger a detailed view (Sidebar Drawer) with historical and scriptural context.
 - **Search & Filter:** Instant search for specific names and filters for time periods (Epochs).
 
-### 2.2 Scholarly Detail Views
+### 2.2 Site Hub (Landing Page)
+- **Card Grid Navigation:** The landing page at `/` must display a responsive grid of cards linking to each major section (Lineage, Martyrdom, and future additions).
+- **Future-Proof:** The hub must accommodate new sections as they are added, with graceful placeholder cards for content not yet built.
+- **Shared Header:** A thin, site-wide header with the brand name must appear on every subpage, linking back to the landing page.
+
+### 2.3 Scholarly Detail Views
 - **Scripture Integration:** Every claim must be backed by a direct Scripture reference and full text.
 - **Reliability Gauges:** Visual indicators for historical certainty levels (e.g., "Scriptural" vs. "Tradition").
 - **Multimedia:** Support for symbols, artifacts, and geographical markers (Maps).
@@ -50,6 +55,7 @@ Autonomously develop and maintain a high-fidelity, interactive, and academically
 - **Design System:** Follow the **Modern Scholar** aesthetic (DESIGN.md).
 - **Surgical Updates:** When fixing bugs or adding features, reproduce with tests first.
 - **Performance First:** If a feature increases the main bundle size by > 10KB, it must be lazy-loaded or refactored.
+- **Smoke Tests:** All routes must be verified with Playwright end-to-end smoke tests before deployment.
 
 ---
 
@@ -57,3 +63,4 @@ Autonomously develop and maintain a high-fidelity, interactive, and academically
 1. **D1 Migrations:** Any new data structures require a D1 schema migration script.
 2. **Edge Compatibility:** All code must be compatible with the Cloudflare Workers / Edge runtime (no Node.js-only modules like `better-sqlite3`).
 3. **Validation:** Every feature must be verified for performance (Lighthouse/Trace) and Biblical accuracy before completion.
+4. **Smoke Tests:** Playwright E2E smoke tests must pass before any deployment.

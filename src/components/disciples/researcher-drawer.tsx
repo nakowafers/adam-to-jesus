@@ -17,7 +17,12 @@ interface ResearcherDrawerProps {
 }
 
 export function ResearcherDrawer({ disciple, onClose }: ResearcherDrawerProps) {
-  const sources: string[] = JSON.parse(disciple.sources || "[]");
+  let sources: string[] = [];
+  try {
+    sources = JSON.parse(disciple.sources || "[]");
+  } catch {
+    sources = [];
+  }
   const normalizedScore = disciple.reliability_score <= 1 
     ? disciple.reliability_score * 100 
     : disciple.reliability_score;
@@ -102,13 +107,14 @@ export function ResearcherDrawer({ disciple, onClose }: ResearcherDrawerProps) {
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
                         onPointerDown={(e) => e.stopPropagation()}
                         className="p-1 -m-1 text-[#3F3F46] hover:text-[#D4AF37] transition-colors touch-none"
+                        aria-label="Reliability info"
                       >
                         <Info size={12} />
                       </button>
@@ -173,7 +179,7 @@ export function ResearcherDrawer({ disciple, onClose }: ResearcherDrawerProps) {
           </span>
           <ul className="space-y-3">
             {sources.map((source, index) => (
-              <li key={index} className="text-xs text-[#A1A1AA] flex gap-3 group">
+              <li key={source} className="text-xs text-[#A1A1AA] flex gap-3 group">
                 <span className="text-[#D4AF37] font-bold opacity-40 group-hover:opacity-100 transition-opacity">0{index + 1}</span>
                 <span className="leading-relaxed">{source}</span>
               </li>

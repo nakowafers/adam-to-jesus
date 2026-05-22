@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 
 export function KofiButton() {
   const kofiId = 'B0B21YOXXP';

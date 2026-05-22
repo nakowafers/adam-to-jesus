@@ -1,6 +1,6 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getDisciples } from '@/lib/disciples';
+import { getDisciples, type Disciple } from '@/lib/disciples';
 import { MartyrdomContainer } from '@/components/disciples/martyrdom-container';
 import { History, Bookmark, ChevronRight } from 'lucide-react';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
@@ -14,30 +14,29 @@ export const metadata: Metadata = {
 };
 
 export default async function MartyrdomPage() {
-  let disciples: any[] = [];
+  let disciples: Disciple[] = [];
   try {
     const context = await getCloudflareContext({ async: true });
     const env = context.env as { DB: any };
-    console.log("Cloudflare Context DB:", !!env?.DB);
     disciples = await getDisciples(env?.DB);
   } catch (e) {
     console.error("Failed to fetch from D1, using fallback:", e);
     // Fallback data for debugging
     disciples = [
-      { id: 'peter', name: 'Simon Peter', year_of_death: '64 AD', location_of_death: 'Rome', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High' }
+      { id: 'peter', name: 'Simon Peter', symbol: 'cross', year_of_death: '64 AD', location_of_death: 'Rome', method_of_death: 'Crucifixion', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High', scripture_reference: 'N/A' }
     ];
   }
 
   // If still empty after trying D1, use the debug fallback
   if (disciples.length === 0) {
     disciples = [
-      { id: 'peter', name: 'Simon Peter', year_of_death: '64 AD', location_of_death: 'Rome', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High' }
+      { id: 'peter', name: 'Simon Peter', symbol: 'cross', year_of_death: '64 AD', location_of_death: 'Rome', method_of_death: 'Crucifixion', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High', scripture_reference: 'N/A' }
     ];
   }
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] selection:bg-[#D4AF37]/30 selection:text-[#0A0A0A]">
-      <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-[#18181B] py-6 px-6 md:px-8">
+      <header className="sticky top-[44px] z-40 bg-black/80 backdrop-blur-xl border-b border-[#18181B] py-6 px-6 md:px-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="space-y-1">
             <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#A1A1AA]">
