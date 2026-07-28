@@ -9,6 +9,7 @@ import {
   BookOpen,
   Bookmark as BookmarkIcon,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import { AsciiLogo } from "@/components/bible/ascii-logo";
 import { SearchOverlay } from "@/components/bible/search-overlay";
@@ -34,7 +35,13 @@ interface HistoryEntry {
   verseIdx?: number;
 }
 
-const BIBLE_DATA: Record<string, Record<string, { book: string; chapter: number; verses: Verse[] }>> = {
+interface PassageData {
+  book: string;
+  chapter: number;
+  verses: Verse[];
+}
+
+const STATIC_BIBLE_DATA: Record<string, Record<string, PassageData>> = {
   KJV: {
     "JOHN.3": {
       book: "John",
@@ -58,6 +65,21 @@ const BIBLE_DATA: Record<string, Record<string, { book: string; chapter: number;
         { verse: 5, text: "And God called the light Day, and the darkness he called Night." },
       ],
     },
+    "ISA.6": {
+      book: "Isaiah",
+      chapter: 6,
+      verses: [
+        { verse: 1, text: "In the year that king Uzziah died I saw also the Lord sitting upon a throne, high and lifted up, and his train filled the temple." },
+        { verse: 2, text: "Above it stood the seraphims: each one had six wings; with twain he covered his face, and with twain he covered his feet, and with twain he did fly." },
+        { verse: 3, text: "And one cried unto another, and said, Holy, holy, holy, is the LORD of hosts: the whole earth is full of his glory." },
+        { verse: 4, text: "And the posts of the door moved at the voice of him that cried, and the house was filled with smoke." },
+        { verse: 5, text: "Then said I, Woe is me! for I am undone; because I am a man of unclean lips, and I dwell in the midst of a people of unclean lips: for mine eyes have seen the King, the LORD of hosts." },
+        { verse: 6, text: "Then flew one of the seraphims unto me, having a live coal in his hand, which he had taken with the tongs from off the altar:" },
+        { verse: 7, text: "And he laid it upon my mouth, and said, Lo, this hath touched thy lips; and thine iniquity is taken away, and thy sin purged." },
+        { verse: 8, text: "Also I heard the voice of the Lord, saying, Whom shall I send, and who will go for us? Then said I, Here am I; send me." },
+        { verse: 9, text: "And he said, Go, and tell this people, Hear ye indeed, but understand not; and see ye indeed, but perceive not." },
+      ],
+    },
     "MAT.1": {
       book: "Matthew",
       chapter: 1,
@@ -76,78 +98,26 @@ const BIBLE_DATA: Record<string, Record<string, { book: string; chapter: number;
         { verse: 3, text: "He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake." },
       ],
     },
-    "REV.22": {
-      book: "Revelation",
-      chapter: 22,
-      verses: [
-        { verse: 21, text: "The grace of our Lord Jesus Christ be with you all. Amen." },
-      ],
-    },
-  },
-  WEB: {
-    "JOHN.3": {
-      book: "John",
-      chapter: 3,
-      verses: [
-        { verse: 1, text: "Now there was a man of the Pharisees named Nicodemus, a ruler of the Jews:" },
-        { verse: 2, text: "The same came to him by night, and said to him, 'Rabbi, we know that you are a teacher come from God...'" },
-        { verse: 3, text: "Jesus answered him, 'Most certainly I tell you, unless one is born anew, he can't see the Kingdom of God.'" },
-        { verse: 16, text: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life." },
-        { verse: 17, text: "For God didn't send his Son into the world to judge the world, but that the world should be saved through him." },
-      ],
-    },
-    "GEN.1": {
-      book: "Genesis",
-      chapter: 1,
-      verses: [
-        { verse: 1, text: "In the beginning, God created the heavens and the earth." },
-        { verse: 2, text: "The earth was formless and empty. Darkness was on the surface of the deep and God's Spirit was hovering over the waters." },
-        { verse: 3, text: "God said, 'Let there be light,' and there was light." },
-        { verse: 4, text: "God saw the light, and saw that it was good. God divided the light from the darkness." },
-        { verse: 5, text: "God called the light 'day', and the darkness he called 'night'." },
-      ],
-    },
-    "MAT.1": {
-      book: "Matthew",
-      chapter: 1,
-      verses: [
-        { verse: 1, text: "The book of the genealogy of Jesus Christ, the son of David, the son of Abraham." },
-        { verse: 2, text: "Abraham became the father of Isaac. Isaac became the father of Jacob. Jacob became the father of Judah and his brothers..." },
-        { verse: 17, text: "So all the generations from Abraham to David are fourteen generations; from David to the carrying away to Babylon fourteen generations; and from the carrying away to Babylon to the Christ, fourteen generations." },
-      ],
-    },
-    "PSA.23": {
-      book: "Psalms",
-      chapter: 23,
-      verses: [
-        { verse: 1, text: "Yahweh is my shepherd: I shall not want." },
-        { verse: 2, text: "He makes me lie down in green pastures. He leads me beside still waters." },
-        { verse: 3, text: "He restores my soul. He guides me in the paths of righteousness for his name's sake." },
-      ],
-    },
-    "REV.22": {
-      book: "Revelation",
-      chapter: 22,
-      verses: [
-        { verse: 21, text: "The grace of the Lord Jesus Christ be with all the saints. Amen." },
-      ],
-    },
   },
 };
 
 const BOOKMARK_STORAGE_KEY = "bible_tui_bookmarks";
 
-function parsePassageKey(input: string): string | null {
+function parsePassageInput(input: string): { book: string; chapter: number } | null {
   const clean = input.trim().toLowerCase().replace(/^:read\s*/, "").replace(/^read\s*/, "").replace(/^:goto\s*/, "");
   
-  if (clean.includes("gen") || clean.includes("genesis")) return "GEN.1";
-  if (clean.includes("john") || clean.includes("jhn")) return "JOHN.3";
-  if (clean.includes("mat") || clean.includes("matthew")) return "MAT.1";
-  if (clean.includes("psa") || clean.includes("psalm")) return "PSA.23";
-  if (clean.includes("rev") || clean.includes("revelation")) return "REV.22";
-  
-  const upper = clean.toUpperCase();
-  if (upper.includes(".")) return upper;
+  const match = clean.match(/^([a-z0-9\s]+?)[\s\.:]+(\d+)/i);
+  if (match) {
+    const bookStr = match[1].trim();
+    const chNum = parseInt(match[2], 10);
+    return { book: bookStr, chapter: chNum };
+  }
+
+  if (clean.includes("isaiah") || clean.startsWith("isa")) return { book: "ISA", chapter: 6 };
+  if (clean.includes("genesis") || clean.startsWith("gen")) return { book: "GEN", chapter: 1 };
+  if (clean.includes("john") || clean.startsWith("jhn")) return { book: "JHN", chapter: 3 };
+  if (clean.includes("matthew") || clean.startsWith("mat")) return { book: "MAT", chapter: 1 };
+  if (clean.includes("psalm") || clean.startsWith("psa") || clean.startsWith("ps")) return { book: "PSA", chapter: 23 };
   
   return null;
 }
@@ -167,10 +137,12 @@ export function BibleTui() {
   const [commandInput, setCommandInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<HistoryEntry[]>([
     { id: "init-1", text: "Cloudflare D1 Edge Bible Engine initialized." },
-    { id: "init-2", text: "Type :help for commands, :read [passage], :theme [name], or press / to focus CLI prompt." },
+    { id: "init-2", text: "Type :read Isaiah 6, :read John 3, :search light, :theme [name], or press / to focus CLI prompt." },
   ]);
   const [isCommandFocused, setIsCommandFocused] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [dynamicPassages, setDynamicPassages] = useState<Record<string, PassageData>>({});
+  const [loadingPassage, setLoadingPassage] = useState(false);
 
   // Search Overlay State (Issue #32)
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -178,8 +150,19 @@ export function BibleTui() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const primaryData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[currentPassage] || BIBLE_DATA["KJV"]["JOHN.3"];
-  const secondaryData = (BIBLE_DATA[secondaryTranslation] || BIBLE_DATA["WEB"])[currentPassage] || BIBLE_DATA["WEB"]["JOHN.3"];
+  // Fetch passage dynamically if not in static cache
+  const getPassageData = (translation: string, passageKey: string): PassageData => {
+    if (dynamicPassages[passageKey]) return dynamicPassages[passageKey];
+    if (STATIC_BIBLE_DATA[translation]?.[passageKey]) return STATIC_BIBLE_DATA[translation][passageKey];
+    if (STATIC_BIBLE_DATA["KJV"]?.[passageKey]) return STATIC_BIBLE_DATA["KJV"][passageKey];
+
+    return (
+      STATIC_BIBLE_DATA["KJV"]["JOHN.3"]
+    );
+  };
+
+  const primaryData = getPassageData(currentTranslation, currentPassage);
+  const secondaryData = getPassageData(secondaryTranslation, currentPassage);
 
   // Hydrate bookmarks from localStorage
   useEffect(() => {
@@ -195,6 +178,32 @@ export function BibleTui() {
       console.error("Failed to load bookmarks from localStorage", e);
     }
   }, []);
+
+  const fetchPassageFromApi = async (book: string, chapter: number, translation: string) => {
+    setLoadingPassage(true);
+    try {
+      const res = await fetch(`/api/bible/${translation}/${encodeURIComponent(book)}/${chapter}`);
+      if (res.ok) {
+        const data = await res.json();
+        const pKey = data.passageKey || `${data.bookId || book.toUpperCase()}.${chapter}`;
+        const newPassage: PassageData = {
+          book: data.book,
+          chapter: data.chapter,
+          verses: data.verses || [],
+        };
+        setDynamicPassages((prev) => ({ ...prev, [pKey]: newPassage }));
+        updateUrlState(pKey, translation);
+        setSelectedVerseIdx(0);
+        addHistoryLine(`Loaded passage ${data.book} Chapter ${data.chapter} via D1 API.`);
+      } else {
+        addHistoryLine(`Failed to fetch ${book} ${chapter}.`);
+      }
+    } catch (err) {
+      console.error("Passage API error:", err);
+    } finally {
+      setLoadingPassage(false);
+    }
+  };
 
   const saveBookmarks = (updated: Bookmark[]) => {
     setBookmarks(updated);
@@ -265,15 +274,12 @@ export function BibleTui() {
       } else {
         addHistoryLine(`Unknown theme "${themeArg}". Available themes: ${THEME_LIST.join(", ")}`);
       }
-    } else if (lower.startsWith(":read") || lower.startsWith("read ") || lower.startsWith(":goto") || lower.startsWith("gen") || lower.startsWith("john") || lower.startsWith("mat") || lower.startsWith("psa") || lower.startsWith("rev")) {
-      const targetPassage = parsePassageKey(cmd);
-      if (targetPassage && (BIBLE_DATA[currentTranslation]?.[targetPassage] || BIBLE_DATA["KJV"]?.[targetPassage])) {
-        updateUrlState(targetPassage, currentTranslation);
-        setSelectedVerseIdx(0);
-        const pData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[targetPassage];
-        addHistoryLine(`Switched passage to ${pData.book} Chapter ${pData.chapter}.`);
+    } else if (lower.startsWith(":read") || lower.startsWith("read ") || lower.startsWith(":goto") || lower.includes(" ")) {
+      const parsed = parsePassageInput(cmd);
+      if (parsed) {
+        fetchPassageFromApi(parsed.book, parsed.chapter, currentTranslation);
       } else {
-        addHistoryLine(`Could not find passage for "${cmd}". Available passages: Genesis 1, John 3, Matthew 1, Psalms 23, Revelation 22.`);
+        addHistoryLine(`Could not parse passage for "${cmd}". Usage: :read Isaiah 6, :read John 3, :read Gen 1.`);
       }
     } else if (lower.startsWith(":lineage")) {
       const name = cmd.split(" ")[1] || "david";
@@ -293,7 +299,7 @@ export function BibleTui() {
       } else {
         addHistoryLine("=== SAVED BIBLE VERSE BOOKMARKS (Click to Jump) ===");
         bookmarks.forEach((bm, idx) => {
-          const passageData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[bm.passage];
+          const passageData = getPassageData(currentTranslation, bm.passage);
           const vIdx = passageData ? passageData.verses.findIndex((v) => v.verse === bm.verse) : 0;
           addHistoryLine(
             `  ${idx + 1}. [${bm.reference}] "${bm.text.slice(0, 45)}..."`,
@@ -306,7 +312,7 @@ export function BibleTui() {
       setCommandHistory([{ id: "clear-1", text: "Command history cleared." }]);
     } else if (lower === ":help") {
       addHistoryLine("=== BIBLE TUI COMMAND DSL SPECIFICATION ===");
-      addHistoryLine("  :read [book] [chapter]   — Jump to passage (e.g. :read John 3, :read Gen 1, :read Matthew 1, :read Ps 23)");
+      addHistoryLine("  :read [book] [chapter]   — Read ANY passage (e.g. :read Isaiah 6, :read Exodus 20, :read John 3)");
       addHistoryLine("  :search [query]          — Open FTS5 Search Overlay modal (e.g., :search light)");
       addHistoryLine("  :theme [name]            — Switch theme (cyan, amber, matrix, monokai)");
       addHistoryLine("  :bookmarks               — List saved bookmarks in console buffer");
@@ -411,26 +417,28 @@ export function BibleTui() {
                 >
                   {currentTranslation}
                 </span>
+                {loadingPassage && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00f0ff]" />}
               </div>
               <p className="text-[11px] font-mono opacity-80" style={{ color: themeConfig.fg }}>
-                {primaryData.verses.length} Verses loaded via Cloudflare D1
+                {primaryData.verses.length} Verses loaded via Cloudflare D1 API
               </p>
             </div>
           </div>
 
           {/* Quick Passage Jump Buttons */}
           <div className="flex items-center gap-1.5 text-xs font-mono">
-            {(["GEN.1", "JOHN.3", "MAT.1", "PSA.23", "REV.22"] as const).map((pKey) => {
-              const pData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[pKey];
-              if (!pData) return null;
-              const isActive = currentPassage === pKey;
+            {[
+              { key: "ISA.6", name: "Isa 6", book: "ISA", ch: 6 },
+              { key: "GEN.1", name: "Gen 1", book: "GEN", ch: 1 },
+              { key: "JOHN.3", name: "John 3", book: "JHN", ch: 3 },
+              { key: "MAT.1", name: "Mat 1", book: "MAT", ch: 1 },
+              { key: "PSA.23", name: "Ps 23", book: "PSA", ch: 23 },
+            ].map((p) => {
+              const isActive = currentPassage === p.key;
               return (
                 <button
-                  key={pKey}
-                  onClick={() => {
-                    updateUrlState(pKey, currentTranslation);
-                    setSelectedVerseIdx(0);
-                  }}
+                  key={p.key}
+                  onClick={() => fetchPassageFromApi(p.book, p.ch, currentTranslation)}
                   style={{
                     borderColor: isActive ? themeConfig.fg : themeConfig.border,
                     backgroundColor: isActive ? `${themeConfig.fg}30` : "transparent",
@@ -440,7 +448,7 @@ export function BibleTui() {
                     isActive ? "shadow-[0_0_8px_rgba(0,240,255,0.4)]" : "opacity-70 hover:opacity-100"
                   }`}
                 >
-                  {pData.book.slice(0, 3)} {pData.chapter}
+                  {p.name}
                 </button>
               );
             })}
@@ -484,7 +492,7 @@ export function BibleTui() {
                   addHistoryLine("No bookmarked verses. Press 'b' to bookmark selected verse.");
                 } else {
                   bookmarks.forEach((bm, i) => {
-                    const passageData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[bm.passage];
+                    const passageData = getPassageData(currentTranslation, bm.passage);
                     const vIdx = passageData ? passageData.verses.findIndex((v) => v.verse === bm.verse) : 0;
                     addHistoryLine(`  ${i + 1}. [${bm.reference}] "${bm.text.slice(0, 45)}..."`, bm.passage, vIdx >= 0 ? vIdx : 0);
                   });
@@ -543,7 +551,7 @@ export function BibleTui() {
               backgroundColor: themeConfig.cardBg,
               boxShadow: themeConfig.glow,
             }}
-            className="border p-5 rounded-lg flex flex-col justify-between"
+            className="border p-5 rounded-lg flex flex-col justify-between min-h-[300px]"
           >
             <div>
               <div
@@ -623,7 +631,7 @@ export function BibleTui() {
                 borderColor: `${themeConfig.secondaryFg}40`,
                 backgroundColor: themeConfig.cardBg,
               }}
-              className="border p-5 rounded-lg flex flex-col justify-between"
+              className="border p-5 rounded-lg flex flex-col justify-between min-h-[300px]"
             >
               <div>
                 <div
@@ -760,7 +768,7 @@ export function BibleTui() {
             onChange={(e) => setCommandInput(e.target.value)}
             onFocus={() => setIsCommandFocused(true)}
             onBlur={() => setIsCommandFocused(false)}
-            placeholder="Type :read John 3, :search light, :theme amber, :bookmarks, :compare, or :help..."
+            placeholder="Type :read Isaiah 6, :read John 3, :search light, :theme amber, :bookmarks, :compare, or :help..."
             style={{ color: themeConfig.fg }}
             className="flex-1 bg-transparent border-none outline-none text-xs sm:text-sm placeholder-white/40 font-mono"
           />
