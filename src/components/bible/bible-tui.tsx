@@ -97,7 +97,6 @@ const BOOKMARK_STORAGE_KEY = "bible_tui_bookmarks";
 function parsePassageInput(input: string): { book: string; chapter: number; verse?: number } | null {
   const clean = input.trim().toLowerCase().replace(/^:read\s*/, "").replace(/^read\s*/, "").replace(/^:goto\s*/, "");
   
-  // Match e.g. "John 3:16", "Genesis 1:3", "Isaiah 6:8", "John 3.16", "John 3 16"
   const matchWithVerse = clean.match(/^([a-z0-9\s]+?)[\s\.:]+(\d+)[\s\.:]+(\d+)/i);
   if (matchWithVerse) {
     const bookStr = matchWithVerse[1].trim();
@@ -106,7 +105,6 @@ function parsePassageInput(input: string): { book: string; chapter: number; vers
     return { book: bookStr, chapter: chNum, verse: verseNum };
   }
 
-  // Match e.g. "John 3", "Genesis 1", "Isaiah 6"
   const matchChapter = clean.match(/^([a-z0-9\s]+?)[\s\.:]+(\d+)/i);
   if (matchChapter) {
     const bookStr = matchChapter[1].trim();
@@ -137,10 +135,13 @@ export function BibleTui() {
   const [compareMode, setCompareMode] = useState(true);
   const [secondaryTranslation, setSecondaryTranslation] = useState<BibleTranslation>("NLT");
   const [commandInput, setCommandInput] = useState("");
+  const [executedCommands, setExecutedCommands] = useState<string[]>([]);
+  const [historyPointer, setHistoryPointer] = useState<number | null>(null);
+
   const [commandHistory, setCommandHistory] = useState<HistoryEntry[]>([
     { id: "init-1", text: "Cloudflare D1 Edge Bible Engine initialized." },
     { id: "init-2", text: "ESV vs NLT Dual-Pane Parallel Comparison Mode Active." },
-    { id: "init-3", text: "Type :read John 3:16, :read Isaiah 6:8, :search light, :theme [name], or press / to focus CLI prompt." },
+    { id: "init-3", text: "Type :read John 3:16, :read Isaiah 6:8, press Up/Down for command history, or press / to focus CLI prompt." },
   ]);
   const [isCommandFocused, setIsCommandFocused] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -167,7 +168,7 @@ export function BibleTui() {
   const primaryData = getPassageData(currentTranslation, currentPassage);
   const secondaryData = getPassageData(secondaryTranslation, currentPassage);
 
-  // Auto-scroll to selected verse when selectedVerseIdx changes
+  // Auto-scroll to selected verse
   useEffect(() => {
     if (primaryData.verses[selectedVerseIdx]) {
       const vNum = primaryData.verses[selectedVerseIdx].verse;
@@ -296,6 +297,10 @@ export function BibleTui() {
     const cmd = commandInput.trim();
     if (!cmd) return;
 
+    // Add to executed command history list for Up/Down arrow navigation
+    setExecutedCommands((prev) => [...prev, cmd]);
+    setHistoryPointer(null);
+
     addHistoryLine(`> ${cmd}`);
     const lower = cmd.toLowerCase();
 
@@ -364,6 +369,7 @@ export function BibleTui() {
       addHistoryLine("  b                        — Bookmark / highlight currently selected verse");
       addHistoryLine("  t                        — Cycle through color themes");
       addHistoryLine("  j / k                    — Move verse selection cursor down / up");
+      addHistoryLine("  Up / Down (Prompt)       — Navigate shell command history buffer");
       addHistoryLine("  Tab                      — Toggle dual-pane comparison pane");
       addHistoryLine("  /                        — Focus CLI input buffer");
       addHistoryLine("  Esc                      — Blur CLI input focus trap");
@@ -374,17 +380,43 @@ export function BibleTui() {
     setCommandInput("");
   };
 
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (executedCommands.length === 0) return;
+
+      if (historyPointer === null) {
+        const nextPtr = executedCommands.length - 1;
+        setHistoryPointer(nextPtr);
+        setCommandInput(executedCommands[nextPtr]);
+      } else if (historyPointer > 0) {
+        const nextPtr = historyPointer - 1;
+        setHistoryPointer(nextPtr);
+        setCommandInput(executedCommands[nextPtr]);
+      }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (historyPointer !== null) {
+        if (historyPointer < executedCommands.length - 1) {
+          const nextPtr = historyPointer + 1;
+          setHistoryPointer(nextPtr);
+          setCommandInput(executedCommands[nextPtr]);
+        } else {
+          setHistoryPointer(null);
+          setCommandInput("");
+        }
+      }
+    } else if (e.key === "Escape") {
+      inputRef.current?.blur();
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeTag = document.activeElement?.tagName?.toLowerCase();
       const isInput = activeTag === "input" || activeTag === "textarea" || (document.activeElement as HTMLElement)?.isContentEditable;
 
-      if (isInput) {
-        if (e.key === "Escape") {
-          inputRef.current?.blur();
-        }
-        return;
-      }
+      if (isInput) return;
 
       if (e.key === "j") {
         setSelectedVerseIdx((prev) => Math.min(prev + 1, primaryData.verses.length - 1));
@@ -777,9 +809,10 @@ export function BibleTui() {
             type="text"
             value={commandInput}
             onChange={(e) => setCommandInput(e.target.value)}
+            onKeyDown={handleInputKeyDown}
             onFocus={() => setIsCommandFocused(true)}
             onBlur={() => setIsCommandFocused(false)}
-            placeholder="Type :read John 3:16, :read Isaiah 6:8, :search light, :theme amber, :bookmarks, or :help..."
+            placeholder="Type :read John 3:16, :read Isaiah 6:8, :search light, :theme amber, or :help... (Press ↑/↓ for history)"
             style={{ color: themeConfig.fg }}
             className="flex-1 bg-transparent border-none outline-none text-xs sm:text-sm placeholder-white/40 font-mono"
           />
@@ -806,6 +839,7 @@ export function BibleTui() {
           className="flex flex-wrap items-center justify-between gap-2 px-2 py-1.5 border rounded text-[11px] font-mono opacity-80"
         >
           <div className="flex items-center gap-3">
+            <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>↑/↓</kbd> History</span>
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>b</kbd> Bookmark</span>
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>t</kbd> Theme</span>
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>j/k</kbd> Scroll</span>
@@ -823,7 +857,6 @@ export function BibleTui() {
         onClose={() => setIsSearchOpen(false)}
         initialQuery={searchInitialQuery}
         onSelectPassage={(passage) => {
-          // Check if passage contains verse number e.g. "GEN.1.3" -> passage="GEN.1", verse=3
           const parts = passage.split(".");
           let pKey = passage;
           let verseNum: number | undefined = undefined;
