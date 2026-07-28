@@ -13,6 +13,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "d1:migrate:local": "wrangler d1 migrations apply lineage-db --local",
+    "d1:migrate:prod": "wrangler d1 migrations apply lineage-db --remote",
     "test": "npx tsx --test 'src/**/*.test.ts'",
     "test:e2e": "playwright test"
   },
