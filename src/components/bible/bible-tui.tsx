@@ -208,16 +208,16 @@ export function BibleTui() {
     fetchPassagePair(book, chapter, currentTranslation, secondaryTranslation, targetVerse);
   }, [currentPassage, currentTranslation, secondaryTranslation]);
 
-  // Auto-scroll to selected verse
+  // Auto-scroll to selected verse ONLY when CLI input prompt is NOT focused
   useEffect(() => {
-    if (primaryData.verses[selectedVerseIdx]) {
+    if (!isCommandFocused && primaryData.verses[selectedVerseIdx]) {
       const vNum = primaryData.verses[selectedVerseIdx].verse;
       const elem = document.getElementById(`verse-${currentPassage}-${vNum}`);
       if (elem) {
-        elem.scrollIntoView({ behavior: "smooth", block: "center" });
+        elem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
       }
     }
-  }, [selectedVerseIdx, currentPassage, primaryData]);
+  }, [selectedVerseIdx, currentPassage, primaryData, isCommandFocused]);
 
   // Hydrate bookmarks from localStorage
   useEffect(() => {
