@@ -41,61 +41,52 @@ interface PassageData {
   verses: Verse[];
 }
 
+export type BibleTranslation = "ESV" | "NLT" | "KJV" | "WEB";
+
 const STATIC_BIBLE_DATA: Record<string, Record<string, PassageData>> = {
-  KJV: {
+  ESV: {
     "JOHN.3": {
       book: "John",
       chapter: 3,
       verses: [
-        { verse: 1, text: "There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:" },
-        { verse: 2, text: "The same came to Jesus by night, and said unto him, Rabbi, we know that thou art a teacher come from God..." },
-        { verse: 3, text: "Jesus answered and said unto him, Verily, verily, I say unto thee, Except a man be born again, he cannot see the kingdom of God." },
-        { verse: 16, text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life." },
-        { verse: 17, text: "For God sent not his Son into the world to condemn the world; but that the world through him might be saved." },
-      ],
-    },
-    "GEN.1": {
-      book: "Genesis",
-      chapter: 1,
-      verses: [
-        { verse: 1, text: "In the beginning God created the heaven and the earth." },
-        { verse: 2, text: "And the earth was without form, and void; and darkness was upon the face of the deep." },
-        { verse: 3, text: "And God said, Let there be light: and there was light." },
-        { verse: 4, text: "And God saw the light, that it was good: and God divided the light from the darkness." },
-        { verse: 5, text: "And God called the light Day, and the darkness he called Night." },
+        { verse: 1, text: "Now there was a man of the Pharisees named Nicodemus, a ruler of the Jews." },
+        { verse: 2, text: "This man came to Jesus by night and said to him, 'Rabbi, we know that you are a teacher come from God...'" },
+        { verse: 3, text: "Jesus answered him, 'Truly, truly, I say to you, unless one is born again he cannot see the kingdom of God.'" },
+        { verse: 16, text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life." },
+        { verse: 17, text: "For God did not send his Son into the world to condemn the world, but in order that the world might be saved through him." },
       ],
     },
     "ISA.6": {
       book: "Isaiah",
       chapter: 6,
       verses: [
-        { verse: 1, text: "In the year that king Uzziah died I saw also the Lord sitting upon a throne, high and lifted up, and his train filled the temple." },
-        { verse: 2, text: "Above it stood the seraphims: each one had six wings; with twain he covered his face, and with twain he covered his feet, and with twain he did fly." },
-        { verse: 3, text: "And one cried unto another, and said, Holy, holy, holy, is the LORD of hosts: the whole earth is full of his glory." },
-        { verse: 4, text: "And the posts of the door moved at the voice of him that cried, and the house was filled with smoke." },
-        { verse: 5, text: "Then said I, Woe is me! for I am undone; because I am a man of unclean lips, and I dwell in the midst of a people of unclean lips: for mine eyes have seen the King, the LORD of hosts." },
-        { verse: 6, text: "Then flew one of the seraphims unto me, having a live coal in his hand, which he had taken with the tongs from off the altar:" },
-        { verse: 7, text: "And he laid it upon my mouth, and said, Lo, this hath touched thy lips; and thine iniquity is taken away, and thy sin purged." },
-        { verse: 8, text: "Also I heard the voice of the Lord, saying, Whom shall I send, and who will go for us? Then said I, Here am I; send me." },
-        { verse: 9, text: "And he said, Go, and tell this people, Hear ye indeed, but understand not; and see ye indeed, but perceive not." },
+        { verse: 1, text: "In the year that King Uzziah died I saw the Lord sitting upon a throne, high and lifted up; and the train of his robe filled the temple." },
+        { verse: 2, text: "Above him stood the seraphim. Each had six wings: with two he covered his face, and with two he covered his feet, and with two he flew." },
+        { verse: 3, text: "And one called to another and said: 'Holy, holy, holy is the LORD of hosts; the whole earth is full of his glory!'" },
+        { verse: 8, text: "And I heard the voice of the Lord saying, 'Whom shall I send, and who will go for us?' Then I said, 'Here I am! Send me.'" },
       ],
     },
-    "MAT.1": {
-      book: "Matthew",
-      chapter: 1,
+  },
+  NLT: {
+    "JOHN.3": {
+      book: "John",
+      chapter: 3,
       verses: [
-        { verse: 1, text: "The book of the generation of Jesus Christ, the son of David, the son of Abraham." },
-        { verse: 2, text: "Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren..." },
-        { verse: 17, text: "So all the generations from Abraham to David are fourteen generations; and from David until the carrying away into Babylon are fourteen generations; and from the carrying away into Babylon unto Christ are fourteen generations." },
+        { verse: 1, text: "There was a man named Nicodemus, a Jewish religious leader who was a Pharisee." },
+        { verse: 2, text: "After dark one evening, he came to speak with Jesus. 'Rabbi,' he said, 'we all know that God has sent you to teach us...'" },
+        { verse: 3, text: "Jesus replied, 'I tell you the truth, unless you are born again, you cannot see the Kingdom of God.'" },
+        { verse: 16, text: "For this is how God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life." },
+        { verse: 17, text: "God sent his Son into the world not to judge the world, but to save the world through him." },
       ],
     },
-    "PSA.23": {
-      book: "Psalms",
-      chapter: 23,
+    "ISA.6": {
+      book: "Isaiah",
+      chapter: 6,
       verses: [
-        { verse: 1, text: "The LORD is my shepherd; I shall not want." },
-        { verse: 2, text: "He maketh me to lie down in green pastures: he leadeth me beside the still waters." },
-        { verse: 3, text: "He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake." },
+        { verse: 1, text: "It was the year King Uzziah died that I saw the Lord. He was sitting on a lofty throne, and the train of his robe filled the Temple." },
+        { verse: 2, text: "Attending him were mighty seraphim, each having six wings. With two wings they covered their faces, with two they covered their feet, and with two they flew." },
+        { verse: 3, text: "They were calling to each other, 'Holy, holy, holy is the LORD of Heaven’s Armies! The whole earth is filled with his glory!'" },
+        { verse: 8, text: "Then I heard the Lord asking, 'Whom should I send as a messenger to this people? Who will go for us?' I said, 'Here I am. Send me.'" },
       ],
     },
   },
@@ -128,16 +119,17 @@ export function BibleTui() {
   const { theme, themeConfig, setTheme, cycleTheme } = useTuiTheme();
 
   // URL state synchronization (BibleTuiSession)
-  const currentPassage = searchParams.get("passage") || "JOHN.3";
-  const currentTranslation = (searchParams.get("translation") || "KJV").toUpperCase();
+  const currentPassage = searchParams.get("passage") || "ISA.6";
+  const currentTranslation = (searchParams.get("translation") || "ESV").toUpperCase() as BibleTranslation;
 
   const [selectedVerseIdx, setSelectedVerseIdx] = useState(0);
-  const [compareMode, setCompareMode] = useState(false);
-  const [secondaryTranslation, setSecondaryTranslation] = useState<"WEB" | "ASV">("WEB");
+  const [compareMode, setCompareMode] = useState(true); // Default to Dual-Pane ESV vs NLT
+  const [secondaryTranslation, setSecondaryTranslation] = useState<BibleTranslation>("NLT");
   const [commandInput, setCommandInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<HistoryEntry[]>([
     { id: "init-1", text: "Cloudflare D1 Edge Bible Engine initialized." },
-    { id: "init-2", text: "Type :read Isaiah 6, :read John 3, :search light, :theme [name], or press / to focus CLI prompt." },
+    { id: "init-2", text: "ESV vs NLT Dual-Pane Parallel Comparison Mode Active." },
+    { id: "init-3", text: "Type :read Isaiah 6, :read John 3, :search light, :theme [name], or press / to focus CLI prompt." },
   ]);
   const [isCommandFocused, setIsCommandFocused] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -150,14 +142,14 @@ export function BibleTui() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch passage dynamically if not in static cache
   const getPassageData = (translation: string, passageKey: string): PassageData => {
-    if (dynamicPassages[passageKey]) return dynamicPassages[passageKey];
+    const dynKey = `${translation}.${passageKey}`;
+    if (dynamicPassages[dynKey]) return dynamicPassages[dynKey];
     if (STATIC_BIBLE_DATA[translation]?.[passageKey]) return STATIC_BIBLE_DATA[translation][passageKey];
-    if (STATIC_BIBLE_DATA["KJV"]?.[passageKey]) return STATIC_BIBLE_DATA["KJV"][passageKey];
+    if (STATIC_BIBLE_DATA["ESV"]?.[passageKey]) return STATIC_BIBLE_DATA["ESV"][passageKey];
 
     return (
-      STATIC_BIBLE_DATA["KJV"]["JOHN.3"]
+      STATIC_BIBLE_DATA["ESV"]["ISA.6"] || STATIC_BIBLE_DATA["ESV"]["JOHN.3"]
     );
   };
 
@@ -191,10 +183,11 @@ export function BibleTui() {
           chapter: data.chapter,
           verses: data.verses || [],
         };
-        setDynamicPassages((prev) => ({ ...prev, [pKey]: newPassage }));
+        const dynKey = `${translation}.${pKey}`;
+        setDynamicPassages((prev) => ({ ...prev, [dynKey]: newPassage }));
         updateUrlState(pKey, translation);
         setSelectedVerseIdx(0);
-        addHistoryLine(`Loaded passage ${data.book} Chapter ${data.chapter} via D1 API.`);
+        addHistoryLine(`Loaded passage ${data.book} Chapter ${data.chapter} [${translation}].`);
       } else {
         addHistoryLine(`Failed to fetch ${book} ${chapter}.`);
       }
@@ -312,11 +305,11 @@ export function BibleTui() {
       setCommandHistory([{ id: "clear-1", text: "Command history cleared." }]);
     } else if (lower === ":help") {
       addHistoryLine("=== BIBLE TUI COMMAND DSL SPECIFICATION ===");
-      addHistoryLine("  :read [book] [chapter]   — Read ANY passage (e.g. :read Isaiah 6, :read Exodus 20, :read John 3)");
+      addHistoryLine("  :read [book] [chapter]   — Read ANY passage (e.g. :read Isaiah 6, :read John 3, :read Exodus 20)");
       addHistoryLine("  :search [query]          — Open FTS5 Search Overlay modal (e.g., :search light)");
       addHistoryLine("  :theme [name]            — Switch theme (cyan, amber, matrix, monokai)");
       addHistoryLine("  :bookmarks               — List saved bookmarks in console buffer");
-      addHistoryLine("  :compare                 — Toggle dual-pane parallel translation view");
+      addHistoryLine("  :compare                 — Toggle ESV vs NLT dual-pane parallel view");
       addHistoryLine("  :lineage [name]          — Search & jump to genealogy lineage ancestor");
       addHistoryLine("  :martyrdom [name]        — Search & jump to apostle martyrdom record");
       addHistoryLine("  :clear                   — Clear console output buffer");
@@ -415,46 +408,58 @@ export function BibleTui() {
                   }}
                   className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold"
                 >
-                  {currentTranslation}
+                  PANE 1: {currentTranslation}
                 </span>
+                {compareMode && (
+                  <span
+                    style={{
+                      backgroundColor: `${themeConfig.secondaryFg}20`,
+                      color: themeConfig.secondaryFg,
+                    }}
+                    className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold"
+                  >
+                    PANE 2: {secondaryTranslation}
+                  </span>
+                )}
                 {loadingPassage && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00f0ff]" />}
               </div>
               <p className="text-[11px] font-mono opacity-80" style={{ color: themeConfig.fg }}>
-                {primaryData.verses.length} Verses loaded via Cloudflare D1 API
+                {primaryData.verses.length} Verses loaded // ESV vs NLT Dual-Pane Active
               </p>
             </div>
           </div>
 
-          {/* Quick Passage Jump Buttons */}
+          {/* Translation Selectors: ESV, NLT, KJV, WEB */}
           <div className="flex items-center gap-1.5 text-xs font-mono">
-            {[
-              { key: "ISA.6", name: "Isa 6", book: "ISA", ch: 6 },
-              { key: "GEN.1", name: "Gen 1", book: "GEN", ch: 1 },
-              { key: "JOHN.3", name: "John 3", book: "JHN", ch: 3 },
-              { key: "MAT.1", name: "Mat 1", book: "MAT", ch: 1 },
-              { key: "PSA.23", name: "Ps 23", book: "PSA", ch: 23 },
-            ].map((p) => {
-              const isActive = currentPassage === p.key;
+            {(["ESV", "NLT", "KJV", "WEB"] as const).map((trans) => {
+              const isPrimary = currentTranslation === trans;
+              const isSecondary = secondaryTranslation === trans && compareMode;
               return (
                 <button
-                  key={p.key}
-                  onClick={() => fetchPassageFromApi(p.book, p.ch, currentTranslation)}
-                  style={{
-                    borderColor: isActive ? themeConfig.fg : themeConfig.border,
-                    backgroundColor: isActive ? `${themeConfig.fg}30` : "transparent",
-                    color: themeConfig.fg,
+                  key={trans}
+                  onClick={() => {
+                    if (isPrimary) {
+                      setSecondaryTranslation(trans === "NLT" ? "ESV" : "NLT");
+                    } else {
+                      updateUrlState(currentPassage, trans);
+                    }
                   }}
-                  className={`px-2 py-1 rounded border text-[11px] font-bold transition cursor-pointer ${
-                    isActive ? "shadow-[0_0_8px_rgba(0,240,255,0.4)]" : "opacity-70 hover:opacity-100"
+                  style={{
+                    borderColor: isPrimary ? themeConfig.fg : isSecondary ? themeConfig.secondaryFg : themeConfig.border,
+                    backgroundColor: isPrimary ? `${themeConfig.fg}30` : isSecondary ? `${themeConfig.secondaryFg}30` : "transparent",
+                    color: isPrimary ? themeConfig.fg : isSecondary ? themeConfig.secondaryFg : themeConfig.fg,
+                  }}
+                  className={`px-2.5 py-1 rounded border text-[11px] font-bold transition cursor-pointer ${
+                    isPrimary || isSecondary ? "shadow-[0_0_8px_rgba(0,240,255,0.4)]" : "opacity-70 hover:opacity-100"
                   }`}
                 >
-                  {p.name}
+                  {trans}
                 </button>
               );
             })}
           </div>
 
-          {/* Mode Pill Indicators, Theme Switcher & Action Selectors */}
+          {/* Mode Pill Indicators & Action Selectors */}
           <div className="flex items-center gap-2 text-xs font-mono">
             <button
               onClick={() => cycleTheme()}
@@ -471,9 +476,7 @@ export function BibleTui() {
             </button>
 
             <button
-              onClick={() => {
-                setIsSearchOpen(true);
-              }}
+              onClick={() => setIsSearchOpen(true)}
               style={{
                 borderColor: themeConfig.border,
                 backgroundColor: `${themeConfig.fg}15`,
@@ -486,37 +489,6 @@ export function BibleTui() {
             </button>
 
             <button
-              onClick={() => {
-                addHistoryLine("=== SAVED BIBLE VERSE BOOKMARKS ===");
-                if (bookmarks.length === 0) {
-                  addHistoryLine("No bookmarked verses. Press 'b' to bookmark selected verse.");
-                } else {
-                  bookmarks.forEach((bm, i) => {
-                    const passageData = getPassageData(currentTranslation, bm.passage);
-                    const vIdx = passageData ? passageData.verses.findIndex((v) => v.verse === bm.verse) : 0;
-                    addHistoryLine(`  ${i + 1}. [${bm.reference}] "${bm.text.slice(0, 45)}..."`, bm.passage, vIdx >= 0 ? vIdx : 0);
-                  });
-                }
-              }}
-              className="px-2.5 py-1 rounded font-bold border border-amber-400/40 bg-amber-400/10 hover:bg-amber-400/20 text-amber-400 transition flex items-center gap-1.5"
-            >
-              <BookmarkIcon className="w-3.5 h-3.5 fill-amber-400" />
-              BOOKMARKS [{bookmarks.length}]
-            </button>
-
-            <button
-              onClick={() => updateUrlState(currentPassage, currentTranslation === "KJV" ? "WEB" : "KJV")}
-              style={{
-                borderColor: themeConfig.border,
-                backgroundColor: `${themeConfig.fg}15`,
-                color: themeConfig.fg,
-              }}
-              className="px-2.5 py-1 rounded font-bold border transition"
-            >
-              TRANSLATION [{currentTranslation}]
-            </button>
-
-            <button
               onClick={() => setCompareMode(!compareMode)}
               style={{
                 backgroundColor: compareMode ? themeConfig.fg : "transparent",
@@ -526,32 +498,21 @@ export function BibleTui() {
               className="px-3 py-1 rounded font-bold border transition flex items-center gap-1.5"
             >
               <Columns className="w-3.5 h-3.5" />
-              DUAL-PANE [{compareMode ? "ON" : "OFF"}]
+              ESV vs NLT [{compareMode ? "ON" : "OFF"}]
             </button>
-
-            <span
-              style={{
-                backgroundColor: `${themeConfig.fg}20`,
-                borderColor: themeConfig.border,
-                color: themeConfig.fg,
-              }}
-              className="border px-2 py-1 rounded text-[11px] font-bold uppercase"
-            >
-              MODE: {isCommandFocused ? "COMMAND" : "NORMAL"}
-            </span>
           </div>
         </div>
 
         {/* Primary Viewport Grid */}
         <div className={`grid gap-4 ${compareMode ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}>
-          {/* Pane 01: Primary Translation Viewport */}
+          {/* Pane 01: Primary Translation Viewport (ESV) */}
           <div
             style={{
               borderColor: themeConfig.border,
               backgroundColor: themeConfig.cardBg,
               boxShadow: themeConfig.glow,
             }}
-            className="border p-5 rounded-lg flex flex-col justify-between min-h-[300px]"
+            className="border p-5 rounded-lg flex flex-col justify-between min-h-[320px]"
           >
             <div>
               <div
@@ -568,7 +529,7 @@ export function BibleTui() {
                   }}
                   className="text-[10px] px-2 py-0.5 rounded font-bold uppercase"
                 >
-                  PRIMARY
+                  PRIMARY ({currentTranslation})
                 </span>
               </div>
 
@@ -624,14 +585,14 @@ export function BibleTui() {
             </div>
           </div>
 
-          {/* Pane 02: Secondary Comparison Viewport (Dual-Pane) */}
+          {/* Pane 02: Secondary Comparison Viewport (NLT) */}
           {compareMode && (
             <div
               style={{
                 borderColor: `${themeConfig.secondaryFg}40`,
                 backgroundColor: themeConfig.cardBg,
               }}
-              className="border p-5 rounded-lg flex flex-col justify-between min-h-[300px]"
+              className="border p-5 rounded-lg flex flex-col justify-between min-h-[320px]"
             >
               <div>
                 <div
@@ -648,7 +609,7 @@ export function BibleTui() {
                     }}
                     className="text-[10px] px-2 py-0.5 rounded font-bold uppercase"
                   >
-                    COMPARISON
+                    COMPARISON ({secondaryTranslation})
                   </span>
                 </div>
 
@@ -802,7 +763,7 @@ export function BibleTui() {
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>Tab</kbd> Dual-Pane</span>
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>Esc</kbd> Blur</span>
           </div>
-          <span className="text-[10px] opacity-75 font-bold uppercase">THEME: {theme}</span>
+          <span className="text-[10px] opacity-75 font-bold uppercase">ESV vs NLT MODE ACTIVE</span>
         </div>
       </div>
 
