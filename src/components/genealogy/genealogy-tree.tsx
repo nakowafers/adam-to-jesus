@@ -1,31 +1,53 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
+import { useState, useMemo, useCallback } from "react";
+import { 
+  Table, 
+  Search, 
+  BookOpen, 
+  ExternalLink, 
+  Info,
+  Layers,
+  Filter,
+  CheckCircle2
+} from "lucide-react";
 import type { Ancestor } from "@/lib/lineage-data";
 import type { LineageGraph } from "@/lib/lineage-repository";
-import { AncestorNode } from "./ancestor-node";
-import { AncestorDrawer } from "./ancestor-drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEntitySelection } from "@/hooks/use-entity-selection";
+import { AncestorDrawer } from "./ancestor-drawer";
 
 interface GenealogyTreeProps {
   initialGraph: LineageGraph;
 }
 
+const EPOCHS = [
+  { id: "all", label: "All Epochs" },
+  { id: "Patriarchs", label: "Patriarchs (Adam-Joseph)" },
+  { id: "Exodus & Conquest", label: "Exodus & Judges" },
+  { id: "United Monarchy", label: "United Monarchy (David)" },
+  { id: "Divided Monarchy & Exile", label: "Exile Era" },
+  { id: "Gospel Era", label: "Gospel Era (Jesus)" },
+];
+
+function getEpochForAncestor(ancestor: Ancestor): string {
+  const gen = ancestor.generation;
+  if (gen <= 20) return "Patriarchs";
+  if (gen <= 32) return "Exodus & Conquest";
+  if (gen === 33) return "United Monarchy";
+  if (gen < 60) return "Divided Monarchy & Exile";
+  return "Gospel Era";
+}
+
 export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
   const isMobile = useIsMobile();
-
   const { mainLineage, royalLine, biologicalLine, jesus } = initialGraph;
-  const allAncestors = useMemo(
-    () => [
-      ...mainLineage,
-      ...royalLine,
-      ...biologicalLine,
-      ...(jesus ? [jesus] : []),
-    ],
-    [mainLineage, royalLine, biologicalLine, jesus]
-  );
+
+  const allAncestors = useMemo(() => {
+    const list = [...mainLineage, ...royalLine, ...biologicalLine];
+    if (jesus) list.push(jesus);
+    return list;
+  }, [mainLineage, royalLine, biologicalLine, jesus]);
 
   const {
     selectedEntity: selectedAncestor,
@@ -34,11 +56,28 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
     clearSelection,
   } = useEntitySelection("ancestor", allAncestors);
 
-  const isDrawerOpen = selectedId !== null;
+  const [activeEpoch, setActiveEpoch] = useState<string>("all");
+  const [activeLineageFilter, setActiveLineageFilter] = useState<"all" | "main" | "royal" | "biological">("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const handleNodeClick = useCallback(
-    (ancestor: Ancestor) => {
-      selectEntity(ancestor.id);
+  const filteredAncestors = useMemo(() => {
+    return allAncestors.filter((a) => {
+      const epoch = getEpochForAncestor(a);
+      const matchesEpoch = activeEpoch === "all" || epoch === activeEpoch;
+      const matchesLineage = activeLineageFilter === "all" || a.lineage === activeLineageFilter;
+      const matchesSearch =
+        !searchQuery ||
+        a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.verseReference.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesEpoch && matchesLineage && matchesSearch;
+    });
+  }, [allAncestors, activeEpoch, activeLineageFilter, searchQuery]);
+
+  const handleRowClick = useCallback(
+    (id: string) => {
+      selectEntity(id);
     },
     [selectEntity]
   );
@@ -47,533 +86,280 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
     clearSelection();
   }, [clearSelection]);
 
-  return (
-    <>
-      <div className="relative w-full">
-        {/* Mobile Layout - Vertical Stack */}
-        {isMobile ? (
-          <MobileTree
-            mainLineage={mainLineage}
-            royalLine={royalLine}
-            biologicalLine={biologicalLine}
-            jesus={jesus}
-            selectedAncestor={selectedAncestor}
-            onNodeClick={handleNodeClick}
-          />
-        ) : (
-          <DesktopTree
-            mainLineage={mainLineage}
-            royalLine={royalLine}
-            biologicalLine={biologicalLine}
-            jesus={jesus}
-            selectedAncestor={selectedAncestor}
-            onNodeClick={handleNodeClick}
-          />
-        )}
-      </div>
-
-      <AncestorDrawer
-        ancestors={allAncestors}
-        selectedId={selectedAncestor?.id || null}
-        isOpen={isDrawerOpen}
-        onClose={handleCloseDrawer}
-      />
-    </>
-  );
-}
-
-interface TreeProps {
-  mainLineage: Ancestor[];
-  royalLine: Ancestor[];
-  biologicalLine: Ancestor[];
-  jesus: Ancestor | undefined;
-  selectedAncestor: Ancestor | null;
-  onNodeClick: (ancestor: Ancestor) => void;
-}
-
-function MobileTree({
-  mainLineage,
-  royalLine,
-  biologicalLine,
-  jesus,
-  selectedAncestor,
-  onNodeClick,
-}: TreeProps) {
-  const [activeLineage, setActiveLineage] = useState<"royal" | "biological">("royal");
-  const [royalExpanded, setRoyalExpanded] = useState(false);
-  const [biologicalExpanded, setBiologicalExpanded] = useState(false);
-
-  // Show first and last 2 ancestors when collapsed, all when expanded
-  const getVisibleAncestors = (ancestors: Ancestor[], expanded: boolean) => {
-    if (expanded || ancestors.length <= 3) return ancestors;
-    return [ancestors[0], ancestors[ancestors.length - 1]];
-  };
-
-  const getHiddenCount = (ancestors: Ancestor[], expanded: boolean) => {
-    if (expanded || ancestors.length <= 3) return 0;
-    return ancestors.length - 2;
-  };
-
-  const visibleRoyal = getVisibleAncestors(royalLine, royalExpanded);
-  const visibleBiological = getVisibleAncestors(biologicalLine, biologicalExpanded);
-  const hiddenRoyalCount = getHiddenCount(royalLine, royalExpanded);
-  const hiddenBiologicalCount = getHiddenCount(biologicalLine, biologicalExpanded);
+  const activeAncestor = selectedAncestor || (filteredAncestors.length > 0 ? filteredAncestors[0] : allAncestors[0]);
 
   return (
-    <div className="flex flex-col items-center px-4 py-8">
-      {/* Era Label */}
-      <div className="mb-6 flex items-center gap-2">
-        <div className="h-px w-8 bg-gradient-to-r from-transparent to-zinc-700" />
-        <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
-          Patriarchs to Kingdom
-        </span>
-        <div className="h-px w-8 bg-gradient-to-l from-transparent to-zinc-700" />
-      </div>
-
-      {/* Main Lineage - Adam to David */}
-      <ol role="list" className="relative flex w-full max-w-sm flex-col items-center">
-        {/* Vertical Progress Line */}
-        <motion.div
-          initial={{ scaleY: 0 }}
-          animate={{ scaleY: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="absolute left-6 top-0 h-full w-px origin-top bg-gradient-to-b from-zinc-600 via-zinc-500 to-zinc-600"
-        />
-
-        {mainLineage.map((ancestor, index) => (
-          <li key={ancestor.id} className="relative flex w-full items-start gap-4">
-            {/* Timeline Node */}
-            <div className="relative flex flex-col items-center pt-4">
-              <div className="relative z-10">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900">
-                  <span className="text-lg font-semibold text-zinc-400">
-                    {ancestor.generation}
-                  </span>
-                </div>
-                <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900">
-                  <div className="h-2 w-2 rounded-full bg-zinc-500" />
-                </div>
-              </div>
-              
-              <span className="mt-2 text-[9px] font-medium uppercase tracking-wider text-zinc-600">
-                {ancestor.id === "adam" && "Creation"}
-                {ancestor.id === "noah" && "Flood"}
-                {ancestor.id === "abraham" && "Covenant"}
-                {ancestor.id === "judah" && "Blessing"}
-                {ancestor.id === "jesse" && "Prophecy"}
-                {ancestor.id === "david" && "Kingdom"}
+    <div className="min-h-[calc(100vh-44px)] bg-zinc-950 text-zinc-100 p-4 md:p-6 lg:p-8 space-y-6">
+      {/* Header & Filter Controls Bar */}
+      <header className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 md:p-5 shadow-xl backdrop-blur-md flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <Table className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-lg md:text-xl font-black tracking-tight text-zinc-100 flex items-center gap-2">
+              Scholarly Genealogy Register
+              <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                Adam to Jesus
               </span>
-            </div>
-
-            {/* Card */}
-            <div className="flex-1 pb-4">
-              <AncestorNode
-                ancestor={ancestor}
-                onClick={onNodeClick}
-                index={index}
-                isSelected={selectedAncestor?.id === ancestor.id}
-                id={`ancestor-${ancestor.id}`}
-              />
-              
-              {/* Connecting Arrow */}
-              {index < mainLineage.length - 1 && (
-                <div className="flex justify-center py-2">
-                  <svg
-                    className="h-4 w-4 text-zinc-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
-      </ol>
-
-      {/* Branch Split Indicator - Toggle */}
-      <div className="relative my-4 flex w-full max-w-sm flex-col items-center">
-        <div className="h-8 w-px bg-zinc-700" />
-        <div className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900 p-1">
-          <button
-            onClick={() => setActiveLineage("royal")}
-            aria-pressed={activeLineage === "royal"}
-            className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all ${
-              activeLineage === "royal"
-                ? "bg-amber-500/20 text-amber-500"
-                : "text-zinc-500 hover:text-zinc-300"
-            }`}
-          >
-            <span className={`h-2.5 w-2.5 rounded-full transition-all ${
-              activeLineage === "royal" ? "bg-amber-500 scale-110" : "bg-amber-500/50"
-            }`} />
-            <span className="text-xs font-medium">Royal</span>
-          </button>
-          <button
-            onClick={() => setActiveLineage("biological")}
-            aria-pressed={activeLineage === "biological"}
-            className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all ${
-              activeLineage === "biological"
-                ? "bg-emerald-500/20 text-emerald-500"
-                : "text-zinc-500 hover:text-zinc-300"
-            }`}
-          >
-            <span className={`h-2.5 w-2.5 rounded-full transition-all ${
-              activeLineage === "biological" ? "bg-emerald-500 scale-110" : "bg-emerald-500/50"
-            }`} />
-            <span className="text-xs font-medium">Biological</span>
-          </button>
+            </h1>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Interactive Master Register • Royal (Matthew 1) & Biological (Luke 3) Lineages
+            </p>
+          </div>
         </div>
-        <div className="h-8 w-px bg-zinc-700" />
-      </div>
 
-      {/* Active Lineage View */}
-      <div className="flex w-full max-w-sm flex-col">
-        {/* Royal Line */}
-        {activeLineage === "royal" && (
-          <div className="relative flex flex-col">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="h-3 w-3 rounded-full bg-amber-500" />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-amber-500">
-                  Royal Line (Matthew 1)
-                </span>
-                <span className="text-xs text-zinc-500">
-                  {royalLine.length} generations to Jesus
-                </span>
-              </div>
-              <div className="h-px flex-1 bg-amber-500/20" />
-            </div>
-            
-            <div className="absolute bottom-0 left-[5px] top-14 w-0.5 rounded-full bg-amber-500/20" />
-            
-            <ol role="list">
-              {visibleRoyal.map((ancestor, index) => {
-                const isFirst = index === 0;
-                const showExpandButton = !royalExpanded && hiddenRoyalCount > 0 && isFirst;
-                
-                return (
-                  <li key={ancestor.id}>
-                    <div className="relative flex items-start gap-4 pb-3">
-                      <div className="relative z-10 mt-4 flex h-3 w-3 items-center justify-center">
-                        <div className="h-3 w-3 rounded-full border-2 border-amber-500 bg-zinc-900" />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <AncestorNode
-                          ancestor={ancestor}
-                          onClick={onNodeClick}
-                          index={mainLineage.length + royalLine.indexOf(ancestor)}
-                          isSelected={selectedAncestor?.id === ancestor.id}
-                          id={`ancestor-${ancestor.id}`}
-                        />
-                      </div>
-                    </div>
-
-                    {showExpandButton && (
-                      <button
-                        onClick={() => setRoyalExpanded(true)}
-                        className="relative mb-3 ml-6 flex items-center gap-3 rounded-lg border border-dashed border-amber-500/30 bg-amber-500/5 px-4 py-3 text-left transition-colors hover:border-amber-500/50 hover:bg-amber-500/10"
-                      >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-amber-500/30 bg-zinc-900">
-                          <svg className="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
-                          </svg>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-amber-500">
-                            Show {hiddenRoyalCount} more generations
-                          </span>
-                          <p className="text-xs text-zinc-500">
-                            Including Rehoboam, Abijah, Zerubbabel...
-                          </p>
-                        </div>
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-            
-            {royalExpanded && royalLine.length > 3 && (
-              <button
-                onClick={() => setRoyalExpanded(false)}
-                className="relative mb-3 ml-6 flex items-center gap-2 text-xs text-amber-500/70 hover:text-amber-500"
-              >
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-                Show less
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Biological Line */}
-        {activeLineage === "biological" && (
-          <div className="relative flex flex-col">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="h-3 w-3 rounded-full bg-emerald-500" />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-emerald-500">
-                  Biological Line (Luke 3)
-                </span>
-                <span className="text-xs text-zinc-500">
-                  {biologicalLine.length} generations to Jesus
-                </span>
-              </div>
-              <div className="h-px flex-1 bg-emerald-500/20" />
-            </div>
-            
-            <div className="absolute bottom-0 left-[5px] top-14 w-0.5 rounded-full bg-emerald-500/20" />
-            
-            <ol role="list">
-              {visibleBiological.map((ancestor, index) => {
-                const isFirst = index === 0;
-                const showExpandButton = !biologicalExpanded && hiddenBiologicalCount > 0 && isFirst;
-                
-                return (
-                  <li key={ancestor.id}>
-                    <div className="relative flex items-start gap-4 pb-3">
-                      <div className="relative z-10 mt-4 flex h-3 w-3 items-center justify-center">
-                        <div className="h-3 w-3 rounded-full border-2 border-emerald-500 bg-zinc-900" />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <AncestorNode
-                          ancestor={ancestor}
-                          onClick={onNodeClick}
-                          index={mainLineage.length + royalLine.length + biologicalLine.indexOf(ancestor)}
-                          isSelected={selectedAncestor?.id === ancestor.id}
-                          id={`ancestor-${ancestor.id}`}
-                        />
-                      </div>
-                    </div>
-
-                    {showExpandButton && (
-                      <button
-                        onClick={() => setBiologicalExpanded(true)}
-                        className="relative mb-3 ml-6 flex items-center gap-3 rounded-lg border border-dashed border-emerald-500/30 bg-emerald-500/5 px-4 py-3 text-left transition-colors hover:border-emerald-500/50 hover:bg-emerald-500/10"
-                      >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-emerald-500/30 bg-zinc-900">
-                          <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
-                          </svg>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-emerald-500">
-                            Show {hiddenBiologicalCount} more generations
-                          </span>
-                          <p className="text-xs text-zinc-500">
-                            Including Mattatha, Melea, Heli...
-                          </p>
-                        </div>
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-            
-            {biologicalExpanded && biologicalLine.length > 3 && (
-              <button
-                onClick={() => setBiologicalExpanded(false)}
-                className="relative mb-3 ml-6 flex items-center gap-2 text-xs text-emerald-500/70 hover:text-amber-500"
-              >
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-                Show less
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Convergence to Jesus */}
-      {jesus && (
-        <div className="mt-4 flex w-full max-w-sm flex-col items-center">
-          <div className={`h-8 w-px ${activeLineage === "royal" ? "bg-amber-500/30" : "bg-emerald-500/30"}`} />
-          <div className="w-full">
-            <AncestorNode
-              ancestor={jesus}
-              onClick={onNodeClick}
-              index={mainLineage.length + royalLine.length + biologicalLine.length}
-              isSelected={selectedAncestor?.id === jesus.id}
-              id={`ancestor-${jesus.id}`}
+        {/* Search Input & Lineage Segment Controls */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[200px] sm:w-64">
+            <Search className="w-4 h-4 absolute left-3 top-3 text-zinc-500" />
+            <input
+              type="text"
+              placeholder="Search by name, title, verse..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
             />
           </div>
+
+          <div className="flex items-center bg-zinc-950 border border-zinc-800 p-1 rounded-xl gap-1">
+            <button
+              onClick={() => setActiveLineageFilter("all")}
+              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                activeLineageFilter === "all"
+                  ? "bg-amber-500 text-zinc-950 font-bold"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              All ({allAncestors.length})
+            </button>
+            <button
+              onClick={() => setActiveLineageFilter("main")}
+              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                activeLineageFilter === "main"
+                  ? "bg-amber-500 text-zinc-950 font-bold"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Main Trunk
+            </button>
+            <button
+              onClick={() => setActiveLineageFilter("royal")}
+              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                activeLineageFilter === "royal"
+                  ? "bg-amber-500 text-zinc-950 font-bold"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Matthew 1
+            </button>
+            <button
+              onClick={() => setActiveLineageFilter("biological")}
+              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                activeLineageFilter === "biological"
+                  ? "bg-emerald-500 text-zinc-950 font-bold"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Luke 3
+            </button>
+          </div>
         </div>
+      </header>
+
+      {/* Epoch Pills Navigation Bar */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+        <Filter className="w-3.5 h-3.5 text-amber-500 shrink-0 mr-1" />
+        {EPOCHS.map((epoch) => (
+          <button
+            key={epoch.id}
+            onClick={() => setActiveEpoch(epoch.id)}
+            className={`text-xs px-3 py-1.5 rounded-full font-medium whitespace-nowrap transition-all border ${
+              activeEpoch === epoch.id
+                ? "bg-amber-500 text-zinc-950 font-bold border-amber-400 shadow-md shadow-amber-500/20"
+                : "bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800"
+            }`}
+          >
+            {epoch.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main Grid: Master Table (Left) + Detail Study Canvas (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Master Lineage Table */}
+        <div className="lg:col-span-7 bg-zinc-900/60 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="p-3 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between">
+            <span className="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+              <Layers className="w-4 h-4 text-amber-400" />
+              Ancestral Register Entries
+            </span>
+            <span className="text-xs font-mono text-zinc-400">
+              Showing {filteredAncestors.length} of {allAncestors.length}
+            </span>
+          </div>
+
+          <div className="overflow-x-auto max-h-[72vh] scrollbar-thin">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead className="bg-zinc-950/90 text-zinc-400 sticky top-0 border-b border-zinc-800 font-mono uppercase text-[10px] backdrop-blur-md z-10">
+                <tr>
+                  <th className="py-3 px-4">Gen</th>
+                  <th className="py-3 px-4">Name / Title</th>
+                  <th className="py-3 px-4">Branch</th>
+                  <th className="py-3 px-4">Scripture</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800/50 text-zinc-300">
+                {filteredAncestors.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-12 text-center text-zinc-500">
+                      No ancestral entries found matching your query or filters.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredAncestors.map((ancestor) => {
+                    const isSelected = activeAncestor?.id === ancestor.id;
+                    return (
+                      <tr
+                        key={ancestor.id}
+                        onClick={() => handleRowClick(ancestor.id)}
+                        className={`cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-amber-500/20 text-amber-200 font-semibold ring-1 ring-amber-500/40"
+                            : "hover:bg-zinc-800/60"
+                        }`}
+                      >
+                        <td className="py-3 px-4 font-mono text-amber-400/90 font-bold">
+                          {ancestor.generation}
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="font-bold text-zinc-100">{ancestor.name}</div>
+                          <div className="text-[11px] text-zinc-400 line-clamp-1">{ancestor.title}</div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-mono font-medium border ${
+                              ancestor.lineage === "royal"
+                                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                : ancestor.lineage === "biological"
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                : "bg-zinc-800 text-zinc-300 border-zinc-700"
+                            }`}
+                          >
+                            {ancestor.lineage === "royal"
+                              ? "Matthew 1"
+                              : ancestor.lineage === "biological"
+                              ? "Luke 3"
+                              : "Main Trunk"}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 font-mono text-amber-400/80 text-[11px]">
+                          {ancestor.verseReference}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Side-by-Side Research Canvas (Desktop) */}
+        {!isMobile && (
+          <div className="lg:col-span-5 sticky top-20">
+            {activeAncestor && <DetailStudyPanel ancestor={activeAncestor} />}
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Drawer when row clicked */}
+      {isMobile && (
+        <AncestorDrawer
+          ancestors={allAncestors}
+          selectedId={selectedId}
+          isOpen={selectedId !== null}
+          onClose={handleCloseDrawer}
+        />
       )}
     </div>
   );
 }
 
-function DesktopTree({
-  mainLineage,
-  royalLine,
-  biologicalLine,
-  jesus,
-  selectedAncestor,
-  onNodeClick,
-}: TreeProps) {
+function DetailStudyPanel({ ancestor }: { ancestor: Ancestor }) {
   return (
-    <div className="relative w-full py-12">
-      <div className="mx-auto flex max-w-2xl flex-col items-center px-8">
-        {/* Era Label */}
-        <div className="mb-10 flex items-center gap-4">
-          <div className="h-px w-16 bg-gradient-to-r from-transparent to-zinc-700" />
-          <span className="text-sm font-medium uppercase tracking-widest text-zinc-500">
-            The Patriarchs to the Kingdom
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 md:p-6 shadow-2xl space-y-5">
+      {/* Header */}
+      <div className="border-b border-zinc-800 pb-4 flex items-start justify-between">
+        <div>
+          <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest">
+            {getEpochForAncestor(ancestor)} • Generation {ancestor.generation}
           </span>
-          <div className="h-px w-16 bg-gradient-to-l from-transparent to-zinc-700" />
+          <h2 className="text-2xl font-black text-zinc-100 mt-1">{ancestor.name}</h2>
+          <p className="text-xs text-amber-300/90 font-medium mt-0.5">{ancestor.title}</p>
         </div>
+        <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono font-bold uppercase">
+          {ancestor.lineage === "royal"
+            ? "Royal Line"
+            : ancestor.lineage === "biological"
+            ? "Biological Line"
+            : "Main Trunk"}
+        </span>
+      </div>
 
-        {/* Main Vertical Timeline - Adam to David */}
-        <ol role="list" className="relative w-full max-w-md">
-          <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            className="absolute left-8 top-0 h-full w-px origin-top bg-gradient-to-b from-zinc-600 via-zinc-500 to-zinc-600"
-          />
+      {/* Historical Summary */}
+      <div className="space-y-1.5">
+        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+          <Info className="w-4 h-4 text-amber-400" />
+          Historical Overview
+        </h3>
+        <p className="text-xs text-zinc-300 leading-relaxed bg-zinc-950/70 p-3.5 rounded-xl border border-zinc-800/80">
+          {ancestor.summary}
+        </p>
+      </div>
 
-          {mainLineage.map((ancestor, index) => (
-            <li key={ancestor.id} className="relative flex items-start gap-6 pb-6">
-              <div className="relative flex flex-col items-center pt-3">
-                <div className="relative z-10">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900">
-                    <span className="text-xl font-semibold text-zinc-400">
-                      {ancestor.generation}
-                    </span>
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900">
-                    <div className="h-2.5 w-2.5 rounded-full bg-zinc-500" />
-                  </div>
-                </div>
+      {/* Scripture Reference */}
+      <div className="space-y-2">
+        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+          <BookOpen className="w-4 h-4 text-amber-400" />
+          Holy Scripture (NLT)
+        </h3>
 
-                <span className="mt-2 text-[10px] font-medium uppercase tracking-wider text-zinc-600">
-                  {ancestor.id === "adam" && "Creation"}
-                  {ancestor.id === "noah" && "Flood"}
-                  {ancestor.id === "abraham" && "Covenant"}
-                  {ancestor.id === "judah" && "Blessing"}
-                  {ancestor.id === "jesse" && "Prophecy"}
-                  {ancestor.id === "david" && "Kingdom"}
-                </span>
-              </div>
-
-              <div className="flex-1 pt-2">
-                <AncestorNode
-                  ancestor={ancestor}
-                  onClick={onNodeClick}
-                  index={index}
-                  isSelected={selectedAncestor?.id === ancestor.id}
-                  id={`ancestor-${ancestor.id}`}
-                />
-              </div>
-            </li>
-          ))}
-        </ol>
-
-        <div className="relative my-6 flex flex-col items-center">
-          <div className="h-10 w-px bg-zinc-700" />
-          <div className="flex items-center gap-4 rounded-full border border-zinc-800 bg-zinc-900 px-6 py-3">
-            <span className="h-3 w-3 rounded-full bg-amber-500" />
-            <span className="text-sm font-medium text-zinc-400">
-              Lineage Split
+        <div className="p-4 bg-amber-950/20 border border-amber-500/20 rounded-xl space-y-3">
+          <p className="text-xs text-amber-100 italic leading-relaxed">
+            &ldquo;{ancestor.verse || "Generational scripture record provided in NLT text."}&rdquo;
+          </p>
+          <div className="flex items-center justify-between pt-2 border-t border-amber-500/10">
+            <span className="text-xs font-mono text-amber-400 font-bold">
+              {ancestor.verseReference}
             </span>
-            <span className="h-3 w-3 rounded-full bg-emerald-500" />
-          </div>
-          <div className="h-10 w-px bg-zinc-700" />
-        </div>
-
-        <div className="flex w-full max-w-2xl gap-8">
-          <div className="flex flex-1 flex-col items-center">
-            <div className="mb-5 flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-amber-500" />
-              <span className="text-sm font-medium text-amber-500">
-                Royal Line (Matthew 1)
-              </span>
-            </div>
-            <ol role="list" className="w-full">
-              {royalLine.map((ancestor, index) => (
-                <li key={ancestor.id} className="flex w-full flex-col items-center">
-                  <div className="w-full">
-                    <AncestorNode
-                      ancestor={ancestor}
-                      onClick={onNodeClick}
-                      index={mainLineage.length + index}
-                      isSelected={selectedAncestor?.id === ancestor.id}
-                      id={`ancestor-${ancestor.id}`}
-                    />
-                  </div>
-                  {index < royalLine.length - 1 && (
-                    <div className="my-3 h-6 w-px bg-amber-500/30" />
-                  )}
-                </li>
-              ))}
-            </ol>
-            <div className="mt-3 h-10 w-px bg-amber-500/30" />
-          </div>
-
-          <div className="flex flex-1 flex-col items-center">
-            <div className="mb-5 flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-emerald-500" />
-              <span className="text-sm font-medium text-emerald-500">
-                Biological Line (Luke 3)
-              </span>
-            </div>
-            <ol role="list" className="w-full">
-              {biologicalLine.map((ancestor, index) => (
-                <li key={ancestor.id} className="flex w-full flex-col items-center">
-                  <div className="w-full">
-                    <AncestorNode
-                      ancestor={ancestor}
-                      onClick={onNodeClick}
-                      index={mainLineage.length + royalLine.length + index}
-                      isSelected={selectedAncestor?.id === ancestor.id}
-                      id={`ancestor-${ancestor.id}`}
-                    />
-                  </div>
-                  {index < biologicalLine.length - 1 && (
-                    <div className="my-3 h-6 w-px bg-emerald-500/30" />
-                  )}
-                </li>
-              ))}
-            </ol>
-            <div className="mt-3 h-10 w-px bg-emerald-500/30" />
+            <a
+              href={ancestor.verseLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-amber-300 hover:text-amber-200 underline flex items-center gap-1.5 font-medium"
+            >
+              Read full chapter <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
+      </div>
 
-        <div className="flex flex-col items-center">
-          <div className="relative flex items-center">
-            <div className="h-px w-16 bg-amber-500/30" />
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900">
-              <div className="h-3 w-3 rounded-full bg-zinc-500" />
-            </div>
-            <div className="h-px w-16 bg-emerald-500/30" />
-          </div>
-          <div className="h-8 w-px bg-zinc-700" />
+      {/* Academic Certainty & Metadata */}
+      <div className="pt-3 border-t border-zinc-800 text-xs text-zinc-400 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-1.5 text-zinc-400">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            Historical Certainty:
+          </span>
+          <span className="text-emerald-400 font-semibold font-mono">Scriptural Record</span>
         </div>
-
-        {jesus && (
-          <div className="w-full max-w-sm">
-            <AncestorNode
-              ancestor={jesus}
-              onClick={onNodeClick}
-              index={mainLineage.length + royalLine.length + biologicalLine.length}
-              isSelected={selectedAncestor?.id === jesus.id}
-              id={`ancestor-${jesus.id}`}
-            />
-          </div>
-        )}
+        <div className="flex items-center justify-between">
+          <span>Branch Alignment:</span>
+          <span className="text-zinc-200 font-medium">
+            {ancestor.lineage === "main" ? "Patriarchal Trunk (Adam-David)" : `${ancestor.lineage} branch`}
+          </span>
+        </div>
       </div>
     </div>
   );
