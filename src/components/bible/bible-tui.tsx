@@ -58,6 +58,31 @@ const BIBLE_DATA: Record<string, Record<string, { book: string; chapter: number;
         { verse: 5, text: "And God called the light Day, and the darkness he called Night." },
       ],
     },
+    "MAT.1": {
+      book: "Matthew",
+      chapter: 1,
+      verses: [
+        { verse: 1, text: "The book of the generation of Jesus Christ, the son of David, the son of Abraham." },
+        { verse: 2, text: "Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren..." },
+        { verse: 17, text: "So all the generations from Abraham to David are fourteen generations; and from David until the carrying away into Babylon are fourteen generations; and from the carrying away into Babylon unto Christ are fourteen generations." },
+      ],
+    },
+    "PSA.23": {
+      book: "Psalms",
+      chapter: 23,
+      verses: [
+        { verse: 1, text: "The LORD is my shepherd; I shall not want." },
+        { verse: 2, text: "He maketh me to lie down in green pastures: he leadeth me beside the still waters." },
+        { verse: 3, text: "He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake." },
+      ],
+    },
+    "REV.22": {
+      book: "Revelation",
+      chapter: 22,
+      verses: [
+        { verse: 21, text: "The grace of our Lord Jesus Christ be with you all. Amen." },
+      ],
+    },
   },
   WEB: {
     "JOHN.3": {
@@ -82,10 +107,50 @@ const BIBLE_DATA: Record<string, Record<string, { book: string; chapter: number;
         { verse: 5, text: "God called the light 'day', and the darkness he called 'night'." },
       ],
     },
+    "MAT.1": {
+      book: "Matthew",
+      chapter: 1,
+      verses: [
+        { verse: 1, text: "The book of the genealogy of Jesus Christ, the son of David, the son of Abraham." },
+        { verse: 2, text: "Abraham became the father of Isaac. Isaac became the father of Jacob. Jacob became the father of Judah and his brothers..." },
+        { verse: 17, text: "So all the generations from Abraham to David are fourteen generations; from David to the carrying away to Babylon fourteen generations; and from the carrying away to Babylon to the Christ, fourteen generations." },
+      ],
+    },
+    "PSA.23": {
+      book: "Psalms",
+      chapter: 23,
+      verses: [
+        { verse: 1, text: "Yahweh is my shepherd: I shall not want." },
+        { verse: 2, text: "He makes me lie down in green pastures. He leads me beside still waters." },
+        { verse: 3, text: "He restores my soul. He guides me in the paths of righteousness for his name's sake." },
+      ],
+    },
+    "REV.22": {
+      book: "Revelation",
+      chapter: 22,
+      verses: [
+        { verse: 21, text: "The grace of the Lord Jesus Christ be with all the saints. Amen." },
+      ],
+    },
   },
 };
 
 const BOOKMARK_STORAGE_KEY = "bible_tui_bookmarks";
+
+function parsePassageKey(input: string): string | null {
+  const clean = input.trim().toLowerCase().replace(/^:read\s*/, "").replace(/^read\s*/, "").replace(/^:goto\s*/, "");
+  
+  if (clean.includes("gen") || clean.includes("genesis")) return "GEN.1";
+  if (clean.includes("john") || clean.includes("jhn")) return "JOHN.3";
+  if (clean.includes("mat") || clean.includes("matthew")) return "MAT.1";
+  if (clean.includes("psa") || clean.includes("psalm")) return "PSA.23";
+  if (clean.includes("rev") || clean.includes("revelation")) return "REV.22";
+  
+  const upper = clean.toUpperCase();
+  if (upper.includes(".")) return upper;
+  
+  return null;
+}
 
 export function BibleTui() {
   const router = useRouter();
@@ -102,7 +167,7 @@ export function BibleTui() {
   const [commandInput, setCommandInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<HistoryEntry[]>([
     { id: "init-1", text: "Cloudflare D1 Edge Bible Engine initialized." },
-    { id: "init-2", text: "Type :help for commands, :theme [name] or 't' to cycle theme, press / to focus CLI prompt." },
+    { id: "init-2", text: "Type :help for commands, :read [passage], :theme [name], or press / to focus CLI prompt." },
   ]);
   const [isCommandFocused, setIsCommandFocused] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -200,14 +265,16 @@ export function BibleTui() {
       } else {
         addHistoryLine(`Unknown theme "${themeArg}". Available themes: ${THEME_LIST.join(", ")}`);
       }
-    } else if (lower.startsWith(":read gen 1") || lower === "gen 1") {
-      updateUrlState("GEN.1", currentTranslation);
-      setSelectedVerseIdx(0);
-      addHistoryLine("Switched passage to Genesis 1.");
-    } else if (lower.startsWith(":read john 3") || lower === "john 3") {
-      updateUrlState("JOHN.3", currentTranslation);
-      setSelectedVerseIdx(0);
-      addHistoryLine("Switched passage to John 3.");
+    } else if (lower.startsWith(":read") || lower.startsWith("read ") || lower.startsWith(":goto") || lower.startsWith("gen") || lower.startsWith("john") || lower.startsWith("mat") || lower.startsWith("psa") || lower.startsWith("rev")) {
+      const targetPassage = parsePassageKey(cmd);
+      if (targetPassage && (BIBLE_DATA[currentTranslation]?.[targetPassage] || BIBLE_DATA["KJV"]?.[targetPassage])) {
+        updateUrlState(targetPassage, currentTranslation);
+        setSelectedVerseIdx(0);
+        const pData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[targetPassage];
+        addHistoryLine(`Switched passage to ${pData.book} Chapter ${pData.chapter}.`);
+      } else {
+        addHistoryLine(`Could not find passage for "${cmd}". Available passages: Genesis 1, John 3, Matthew 1, Psalms 23, Revelation 22.`);
+      }
     } else if (lower.startsWith(":lineage")) {
       const name = cmd.split(" ")[1] || "david";
       addHistoryLine(`Navigating to Genealogy tree for ancestor: ${name}...`);
@@ -239,7 +306,7 @@ export function BibleTui() {
       setCommandHistory([{ id: "clear-1", text: "Command history cleared." }]);
     } else if (lower === ":help") {
       addHistoryLine("=== BIBLE TUI COMMAND DSL SPECIFICATION ===");
-      addHistoryLine("  :read [book] [chapter]   — Jump to passage (e.g., :read John 3, :read Gen 1)");
+      addHistoryLine("  :read [book] [chapter]   — Jump to passage (e.g. :read John 3, :read Gen 1, :read Matthew 1, :read Ps 23)");
       addHistoryLine("  :search [query]          — Open FTS5 Search Overlay modal (e.g., :search light)");
       addHistoryLine("  :theme [name]            — Switch theme (cyan, amber, matrix, monokai)");
       addHistoryLine("  :bookmarks               — List saved bookmarks in console buffer");
@@ -349,6 +416,34 @@ export function BibleTui() {
                 {primaryData.verses.length} Verses loaded via Cloudflare D1
               </p>
             </div>
+          </div>
+
+          {/* Quick Passage Jump Buttons */}
+          <div className="flex items-center gap-1.5 text-xs font-mono">
+            {(["GEN.1", "JOHN.3", "MAT.1", "PSA.23", "REV.22"] as const).map((pKey) => {
+              const pData = (BIBLE_DATA[currentTranslation] || BIBLE_DATA["KJV"])[pKey];
+              if (!pData) return null;
+              const isActive = currentPassage === pKey;
+              return (
+                <button
+                  key={pKey}
+                  onClick={() => {
+                    updateUrlState(pKey, currentTranslation);
+                    setSelectedVerseIdx(0);
+                  }}
+                  style={{
+                    borderColor: isActive ? themeConfig.fg : themeConfig.border,
+                    backgroundColor: isActive ? `${themeConfig.fg}30` : "transparent",
+                    color: themeConfig.fg,
+                  }}
+                  className={`px-2 py-1 rounded border text-[11px] font-bold transition cursor-pointer ${
+                    isActive ? "shadow-[0_0_8px_rgba(0,240,255,0.4)]" : "opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  {pData.book.slice(0, 3)} {pData.chapter}
+                </button>
+              );
+            })}
           </div>
 
           {/* Mode Pill Indicators, Theme Switcher & Action Selectors */}
