@@ -1,35 +1,51 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
-import { fullAncestors as ancestors, type Ancestor } from "@/lib/lineage-data";
+import type { Ancestor } from "@/lib/lineage-data";
+import type { LineageGraph } from "@/lib/lineage-repository";
 import { AncestorNode } from "./ancestor-node";
 import { AncestorDrawer } from "./ancestor-drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEntitySelection } from "@/hooks/use-entity-selection";
 
-// Separate ancestors by lineage outside the component to avoid recalculation on every render
-const mainLineage = ancestors.filter(
-  (a) => a.lineage === "main"
-);
-const royalLine = ancestors.filter((a) => a.lineage === "royal" && !a.id.startsWith("jesus"));
-const biologicalLine = ancestors.filter((a) => a.lineage === "biological" && !a.id.startsWith("jesus"));
-const jesus = ancestors.find((a) => a.id.startsWith("jesus"));
+interface GenealogyTreeProps {
+  initialGraph: LineageGraph;
+}
 
-export function GenealogyTree() {
-  const [selectedAncestor, setSelectedAncestor] = useState<Ancestor | null>(
-    null
-  );
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
   const isMobile = useIsMobile();
 
-  const handleNodeClick = useCallback((ancestor: Ancestor) => {
-    setSelectedAncestor(ancestor);
-    setIsDrawerOpen(true);
-  }, []);
+  const { mainLineage, royalLine, biologicalLine, jesus } = initialGraph;
+  const allAncestors = useMemo(
+    () => [
+      ...mainLineage,
+      ...royalLine,
+      ...biologicalLine,
+      ...(jesus ? [jesus] : []),
+    ],
+    [mainLineage, royalLine, biologicalLine, jesus]
+  );
+
+  const {
+    selectedEntity: selectedAncestor,
+    selectedId,
+    selectEntity,
+    clearSelection,
+  } = useEntitySelection("ancestor", allAncestors);
+
+  const isDrawerOpen = selectedId !== null;
+
+  const handleNodeClick = useCallback(
+    (ancestor: Ancestor) => {
+      selectEntity(ancestor.id);
+    },
+    [selectEntity]
+  );
 
   const handleCloseDrawer = useCallback(() => {
-    setIsDrawerOpen(false);
-  }, []);
+    clearSelection();
+  }, [clearSelection]);
 
   return (
     <>
@@ -57,7 +73,7 @@ export function GenealogyTree() {
       </div>
 
       <AncestorDrawer
-        ancestors={ancestors}
+        ancestors={allAncestors}
         selectedId={selectedAncestor?.id || null}
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}

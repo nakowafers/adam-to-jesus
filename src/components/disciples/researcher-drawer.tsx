@@ -2,7 +2,7 @@
 
 import { Disciple } from "@/lib/disciples";
 import { motion } from "framer-motion";
-import { X, BookOpen, ScrollText, Share2, ShieldCheck, Info } from "lucide-react";
+import { BookOpen, ScrollText, Share2, ShieldCheck, Info } from "lucide-react";
 import { ApostolicIcon } from "./apostolic-icon";
 import { 
   Tooltip, 
@@ -10,13 +10,15 @@ import {
   TooltipTrigger,
   TooltipProvider
 } from "@/components/ui/tooltip";
+import { ResearchSheet } from "@/components/ui/research-sheet";
 
 interface ResearcherDrawerProps {
   disciple: Disciple;
   onClose: () => void;
+  isOpen?: boolean;
 }
 
-export function ResearcherDrawer({ disciple, onClose }: ResearcherDrawerProps) {
+export function ResearcherDrawer({ disciple, onClose, isOpen = true }: ResearcherDrawerProps) {
   let sources: string[] = [];
   try {
     sources = JSON.parse(disciple.sources || "[]");
@@ -29,37 +31,27 @@ export function ResearcherDrawer({ disciple, onClose }: ResearcherDrawerProps) {
   const roundedScore = Math.round(normalizedScore);
 
   return (
-    <motion.div
-      initial={{ y: "100%", x: 0 }}
-      animate={{ y: 0, x: 0 }}
-      exit={{ y: "100%", x: 0 }}
-      variants={{
-        desktop: { x: 0, y: 0 },
-        mobile: { x: 0, y: 0 }
-      }}
-      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+    <ResearchSheet
+      isOpen={isOpen}
+      onClose={onClose}
       className="fixed inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[480px] bg-[#0A0A0A] border-t md:border-t-0 md:border-l border-[#27272A] z-50 shadow-2xl flex flex-col rounded-t-2xl md:rounded-none max-h-[92vh] md:max-h-screen"
     >
       {/* Mobile Drag Handle */}
-      <div className="flex justify-center py-3 md:hidden">
+      <div className="flex justify-center py-3 md:hidden shrink-0">
         <div className="w-12 h-1 bg-[#27272A] rounded-full"></div>
       </div>
 
-      <header className="px-6 pb-4 md:py-6 border-b border-[#18181B] flex justify-between items-center bg-[#0A0A0A]">
+      <ResearchSheet.Header
+        onClose={onClose}
+        className="px-6 pb-4 md:py-6 border-b border-[#18181B] bg-[#0A0A0A]"
+      >
         <div>
           <h2 className="text-sm font-bold tracking-widest text-[#D4AF37] uppercase mb-0.5">Context View</h2>
           <p className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest">Academic Deep Dive</p>
         </div>
-        <button 
-          onClick={onClose}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#18181B] text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors border border-[#27272A]"
-          aria-label="Close details"
-        >
-          <X size={18} />
-        </button>
-      </header>
+      </ResearchSheet.Header>
 
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-10 custom-scrollbar">
+      <ResearchSheet.Body className="p-6 md:p-8 space-y-10 custom-scrollbar">
         {/* Profile Section */}
         <section className="flex items-center gap-6">
           <div className="relative">
@@ -186,15 +178,14 @@ export function ResearcherDrawer({ disciple, onClose }: ResearcherDrawerProps) {
             ))}
           </ul>
         </section>
-      </div>
+      </ResearchSheet.Body>
 
-      {/* Export Action */}
-      <footer className="p-4 md:p-6 bg-[#0A0A0A] border-t border-[#18181B]">
+      <ResearchSheet.Footer className="p-4 md:p-6 bg-[#0A0A0A] border-t border-[#18181B]">
         <button className="w-full py-4 bg-[#D4AF37] text-[#0A0A0A] text-xs font-black uppercase tracking-[0.2em] rounded flex items-center justify-center gap-2 hover:bg-[#F2CA50] active:scale-[0.98] transition-all shadow-xl">
           <Share2 size={14} />
           Export Research File
         </button>
-      </footer>
-    </motion.div>
+      </ResearchSheet.Footer>
+    </ResearchSheet>
   );
 }

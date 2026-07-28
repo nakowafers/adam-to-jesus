@@ -1,17 +1,21 @@
 'use client';
 
-import { useState } from 'react';
 import { Disciple } from '@/lib/disciples';
 import { ApostolicCard } from './apostolic-card';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { ResearcherDrawer } from './researcher-drawer';
+import { useEntitySelection } from '@/hooks/use-entity-selection';
 
 interface MartyrdomContainerProps {
   initialDisciples: Disciple[];
 }
 
 export function MartyrdomContainer({ initialDisciples }: MartyrdomContainerProps) {
-  const [selectedDisciple, setSelectedDisciple] = useState<Disciple | null>(null);
+  const {
+    selectedEntity: selectedDisciple,
+    selectEntity,
+    clearSelection,
+  } = useEntitySelection('disciple', initialDisciples);
 
   return (
     <div className="relative space-y-8 pb-24">
@@ -22,26 +26,17 @@ export function MartyrdomContainer({ initialDisciples }: MartyrdomContainerProps
             key={disciple.id}
             disciple={disciple}
             isSelected={selectedDisciple?.id === disciple.id}
-            onSelect={setSelectedDisciple}
+            onSelect={(d) => selectEntity(d.id)}
           />
         ))}
       </div>
 
       <AnimatePresence>
         {selectedDisciple && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedDisciple(null)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity"
-            />
-            <ResearcherDrawer 
-              disciple={selectedDisciple} 
-              onClose={() => setSelectedDisciple(null)} 
-            />
-          </>
+          <ResearcherDrawer 
+            disciple={selectedDisciple} 
+            onClose={clearSelection} 
+          />
         )}
       </AnimatePresence>
       
