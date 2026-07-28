@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { GitFork, Cross, Plus } from "lucide-react";
+import { GitFork, Cross, Terminal } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ const siteJsonLd = {
   "name": "From Adam to Jesus",
   "url": "https://fromadamtojesus.com",
   "description":
-    "Explore the biblical narrative through interactive history — the genealogy of Jesus, the twelve apostles, and more.",
+    "Explore the biblical narrative through interactive history — the genealogy of Jesus, the twelve apostles, and the built-in Bible TUI reader.",
 };
 
 const siteJsonLdString = JSON.stringify(siteJsonLd);
@@ -78,19 +78,21 @@ export default function Home() {
               </Card>
             </Link>
 
-            {/* Coming Soon Card */}
-            <Card className="h-full border-zinc-800 bg-zinc-950 opacity-50 cursor-default">
-              <CardHeader>
-                <Plus className="size-8 text-zinc-600 mb-2" />
-                <CardTitle className="text-zinc-500 text-xl">
-                  More Coming Soon
-                </CardTitle>
-                <CardDescription className="text-zinc-600 text-sm leading-relaxed">
-                  Additional resources and interactive studies are on the way.
-                </CardDescription>
-              </CardHeader>
-              <CardContent />
-            </Card>
+            {/* Bible TUI Card */}
+            <Link href="/bible" className="group block">
+              <Card className="h-full border-zinc-800 bg-zinc-950 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#00f0ff]/60 group-hover:shadow-lg group-hover:shadow-cyan-950/30 cursor-pointer">
+                <CardHeader>
+                  <Terminal className="size-8 text-[#00f0ff]/80 mb-2" />
+                  <CardTitle className="text-zinc-50 text-xl">
+                    Bible TUI Reader
+                  </CardTitle>
+                  <CardDescription className="text-zinc-400 text-sm leading-relaxed">
+                    Built-in retro terminal scripture reader with FTS5 search, Vim hotkeys, and parallel translation comparison.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent />
+              </Card>
+            </Link>
           </div>
         </section>
 

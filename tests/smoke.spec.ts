@@ -6,11 +6,11 @@ test.describe('Landing page (/)', () => {
     await expect(page.locator('h1')).toContainText('From Adam to Jesus')
   })
 
-  test('should display navigation cards', async ({ page }) => {
+  test('should display navigation cards including Bible TUI Reader', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByText('The Genealogy')).toBeVisible()
     await expect(page.getByText('The Disciples')).toBeVisible()
-    await expect(page.getByText('More Coming Soon')).toBeVisible()
+    await expect(page.getByText('Bible TUI Reader')).toBeVisible()
   })
 
   test('should navigate to lineage page via card click', async ({ page }) => {
@@ -24,14 +24,62 @@ test.describe('Landing page (/)', () => {
     await page.getByText('The Disciples').click()
     await expect(page).toHaveURL('/disciples/martyrdom')
   })
+
+  test('should navigate to bible tui page via card click', async ({ page }) => {
+    await page.goto('/')
+    await page.getByText('Bible TUI Reader').click()
+    await expect(page).toHaveURL('/bible')
+  })
+})
+
+test.describe('Bible TUI page (/bible)', () => {
+  test('should load production Bible TUI page', async ({ page }) => {
+    await page.goto('/bible')
+    await expect(page.getByText('BIBLE TUI')).toBeVisible()
+    await expect(page.getByPlaceholder(/Type :read/)).toBeVisible()
+  })
+
+  test('should toggle verse bookmarking via b key and persist in localStorage', async ({ page }) => {
+    await page.goto('/bible')
+    // Click verse 16 to select it
+    await page.getByText('For God so loved the world').click()
+    // Press 'b' to bookmark selected verse
+    await page.keyboard.press('b')
+    // Console log output should report bookmark addition
+    await expect(page.getByText('[BOOKMARK] Saved John 3:1')).toBeVisible()
+
+    // Verify localStorage persistence under key bible_tui_bookmarks
+    const saved = await page.evaluate(() => localStorage.getItem('bible_tui_bookmarks'))
+    expect(saved).toBeTruthy()
+    expect(saved).toContain('JOHN.3:1')
+
+    // Press 'b' again to un-bookmark
+    await page.keyboard.press('b')
+    await expect(page.getByText('[BOOKMARK] Removed John 3:1')).toBeVisible()
+  })
+
+  test('should list bookmarks and support shortcuts via :bookmarks command', async ({ page }) => {
+    await page.goto('/bible')
+    // Click bookmark button for John 3:16
+    await page.getByLabel('Bookmark John 3:16').click()
+
+    // Focus CLI prompt by pressing '/'
+    await page.keyboard.press('/')
+    const promptInput = page.getByPlaceholder(/Type :read/)
+    await expect(promptInput).toBeFocused()
+    await promptInput.fill(':bookmarks')
+    await page.keyboard.press('Enter')
+
+    // Console output buffer should display saved bookmarks
+    await expect(page.getByText('=== SAVED BIBLE VERSE BOOKMARKS')).toBeVisible()
+    await expect(page.getByText('[John 3:16]')).toBeVisible()
+  })
 })
 
 test.describe('Lineage page (/lineage)', () => {
   test('should load the genealogy tree', async ({ page }) => {
     await page.goto('/lineage')
     await expect(page.locator('h1')).toHaveCount(0)
-    // The lineage page has no h1 — it renders the GenealogyTree component
-    // Verify the page loads without error by checking the footer
     await expect(page.getByText('Created with faith, by Nicola')).toBeVisible()
   })
 
@@ -61,7 +109,7 @@ test.describe('Martyrdom page (/disciples/martyrdom)', () => {
 
 test.describe('Site header', () => {
   test('site header is present on all pages', async ({ page }) => {
-    const pages = ['/', '/lineage', '/disciples/martyrdom']
+    const pages = ['/', '/lineage', '/disciples/martyrdom', '/bible']
     for (const route of pages) {
       await page.goto(route)
       await expect(
@@ -76,12 +124,10 @@ test.describe('Responsive layout', () => {
     await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/')
     const cards = page.locator('[data-slot="card"]')
-    // On mobile, cards should be in a single column
     const firstCard = cards.nth(0)
     const secondCard = cards.nth(1)
     const firstBox = await firstCard.boundingBox()
     const secondBox = await secondCard.boundingBox()
-    // Second card should be below the first card
     if (firstBox && secondBox) {
       expect(secondBox.y).toBeGreaterThan(firstBox.y + firstBox.height)
     }
