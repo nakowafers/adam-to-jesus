@@ -120,18 +120,18 @@ describe("useEntitySelection hook", () => {
     ]);
   });
 
-  it("calls router.replace with newUrl and scroll: false when param already exists", () => {
+  it("calls router.push with newUrl and scroll: false when param already exists", () => {
     mockSearchParams = new URLSearchParams("ancestor=david");
     mockPathname = "/lineage";
 
     let capturedResult: any = null;
-    let replaceCalledWith: [string, { scroll: boolean }] | null = null;
+    let pushCalledWith: [string, { scroll: boolean }] | null = null;
 
     mockRouter = {
-      push: () => {},
-      replace: (url: string, opts?: { scroll?: boolean }) => {
-        replaceCalledWith = [url, opts as { scroll: boolean }];
+      push: (url: string, opts?: { scroll?: boolean }) => {
+        pushCalledWith = [url, opts as { scroll: boolean }];
       },
+      replace: () => {},
     };
 
     function TestComponent() {
@@ -143,7 +143,7 @@ describe("useEntitySelection hook", () => {
 
     capturedResult?.selectEntity("abraham");
 
-    assert.deepStrictEqual(replaceCalledWith, [
+    assert.deepStrictEqual(pushCalledWith, [
       "/lineage?ancestor=abraham",
       { scroll: false },
     ]);
@@ -154,13 +154,13 @@ describe("useEntitySelection hook", () => {
     mockPathname = "/lineage";
 
     let capturedResult: any = null;
-    let replaceCalledWith: [string, { scroll: boolean }] | null = null;
+    let pushCalledWith: [string, { scroll: boolean }] | null = null;
 
     mockRouter = {
-      push: () => {},
-      replace: (url: string, opts?: { scroll?: boolean }) => {
-        replaceCalledWith = [url, opts as { scroll: boolean }];
+      push: (url: string, opts?: { scroll?: boolean }) => {
+        pushCalledWith = [url, opts as { scroll: boolean }];
       },
+      replace: () => {},
     };
 
     function TestComponent() {
@@ -172,7 +172,7 @@ describe("useEntitySelection hook", () => {
 
     capturedResult?.clearSelection();
 
-    assert.deepStrictEqual(replaceCalledWith, [
+    assert.deepStrictEqual(pushCalledWith, [
       "/lineage?foo=bar",
       { scroll: false },
     ]);

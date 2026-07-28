@@ -31,8 +31,6 @@ export function useEntitySelection<T extends { id: string }>(
       const currentParams = searchParams
         ? new URLSearchParams(searchParams.toString())
         : new URLSearchParams();
-      const hasParam = searchParams ? searchParams.has(paramKey) : false;
-
       if (id === null || id === "") {
         currentParams.delete(paramKey);
       } else {
@@ -42,11 +40,7 @@ export function useEntitySelection<T extends { id: string }>(
       const queryString = currentParams.toString();
       const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
-      if (hasParam) {
-        router.replace(newUrl, { scroll: false });
-      } else {
-        router.push(newUrl, { scroll: false });
-      }
+      router.push(newUrl, { scroll: false });
     },
     [paramKey, searchParams, pathname, router]
   );
