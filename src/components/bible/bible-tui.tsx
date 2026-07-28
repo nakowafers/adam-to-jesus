@@ -94,13 +94,23 @@ const STATIC_BIBLE_DATA: Record<string, Record<string, PassageData>> = {
 
 const BOOKMARK_STORAGE_KEY = "bible_tui_bookmarks";
 
-function parsePassageInput(input: string): { book: string; chapter: number } | null {
+function parsePassageInput(input: string): { book: string; chapter: number; verse?: number } | null {
   const clean = input.trim().toLowerCase().replace(/^:read\s*/, "").replace(/^read\s*/, "").replace(/^:goto\s*/, "");
   
-  const match = clean.match(/^([a-z0-9\s]+?)[\s\.:]+(\d+)/i);
-  if (match) {
-    const bookStr = match[1].trim();
-    const chNum = parseInt(match[2], 10);
+  // Match e.g. "John 3:16", "Genesis 1:3", "Isaiah 6:8", "John 3.16", "John 3 16"
+  const matchWithVerse = clean.match(/^([a-z0-9\s]+?)[\s\.:]+(\d+)[\s\.:]+(\d+)/i);
+  if (matchWithVerse) {
+    const bookStr = matchWithVerse[1].trim();
+    const chNum = parseInt(matchWithVerse[2], 10);
+    const verseNum = parseInt(matchWithVerse[3], 10);
+    return { book: bookStr, chapter: chNum, verse: verseNum };
+  }
+
+  // Match e.g. "John 3", "Genesis 1", "Isaiah 6"
+  const matchChapter = clean.match(/^([a-z0-9\s]+?)[\s\.:]+(\d+)/i);
+  if (matchChapter) {
+    const bookStr = matchChapter[1].trim();
+    const chNum = parseInt(matchChapter[2], 10);
     return { book: bookStr, chapter: chNum };
   }
 
@@ -109,7 +119,7 @@ function parsePassageInput(input: string): { book: string; chapter: number } | n
   if (clean.includes("john") || clean.startsWith("jhn")) return { book: "JHN", chapter: 3 };
   if (clean.includes("matthew") || clean.startsWith("mat")) return { book: "MAT", chapter: 1 };
   if (clean.includes("psalm") || clean.startsWith("psa") || clean.startsWith("ps")) return { book: "PSA", chapter: 23 };
-  
+
   return null;
 }
 
@@ -121,15 +131,16 @@ export function BibleTui() {
   // URL state synchronization (BibleTuiSession)
   const currentPassage = searchParams.get("passage") || "ISA.6";
   const currentTranslation = (searchParams.get("translation") || "ESV").toUpperCase() as BibleTranslation;
+  const initialVerseParam = searchParams.get("verse");
 
   const [selectedVerseIdx, setSelectedVerseIdx] = useState(0);
-  const [compareMode, setCompareMode] = useState(true); // Default to Dual-Pane ESV vs NLT
+  const [compareMode, setCompareMode] = useState(true);
   const [secondaryTranslation, setSecondaryTranslation] = useState<BibleTranslation>("NLT");
   const [commandInput, setCommandInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<HistoryEntry[]>([
     { id: "init-1", text: "Cloudflare D1 Edge Bible Engine initialized." },
     { id: "init-2", text: "ESV vs NLT Dual-Pane Parallel Comparison Mode Active." },
-    { id: "init-3", text: "Type :read Isaiah 6, :read John 3, :search light, :theme [name], or press / to focus CLI prompt." },
+    { id: "init-3", text: "Type :read John 3:16, :read Isaiah 6:8, :search light, :theme [name], or press / to focus CLI prompt." },
   ]);
   const [isCommandFocused, setIsCommandFocused] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -156,6 +167,30 @@ export function BibleTui() {
   const primaryData = getPassageData(currentTranslation, currentPassage);
   const secondaryData = getPassageData(secondaryTranslation, currentPassage);
 
+  // Auto-scroll to selected verse when selectedVerseIdx changes
+  useEffect(() => {
+    if (primaryData.verses[selectedVerseIdx]) {
+      const vNum = primaryData.verses[selectedVerseIdx].verse;
+      const elem = document.getElementById(`verse-${currentPassage}-${vNum}`);
+      if (elem) {
+        elem.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [selectedVerseIdx, currentPassage, primaryData]);
+
+  // Initial verse param lookup
+  useEffect(() => {
+    if (initialVerseParam) {
+      const vNum = parseInt(initialVerseParam, 10);
+      if (!isNaN(vNum)) {
+        const vIdx = primaryData.verses.findIndex((v) => v.verse === vNum);
+        if (vIdx >= 0) {
+          setSelectedVerseIdx(vIdx);
+        }
+      }
+    }
+  }, [initialVerseParam, primaryData]);
+
   // Hydrate bookmarks from localStorage
   useEffect(() => {
     try {
@@ -171,7 +206,7 @@ export function BibleTui() {
     }
   }, []);
 
-  const fetchPassageFromApi = async (book: string, chapter: number, translation: string) => {
+  const fetchPassageFromApi = async (book: string, chapter: number, translation: string, targetVerse?: number) => {
     setLoadingPassage(true);
     try {
       const res = await fetch(`/api/bible/${translation}/${encodeURIComponent(book)}/${chapter}`);
@@ -185,9 +220,17 @@ export function BibleTui() {
         };
         const dynKey = `${translation}.${pKey}`;
         setDynamicPassages((prev) => ({ ...prev, [dynKey]: newPassage }));
-        updateUrlState(pKey, translation);
-        setSelectedVerseIdx(0);
-        addHistoryLine(`Loaded passage ${data.book} Chapter ${data.chapter} [${translation}].`);
+        updateUrlState(pKey, translation, targetVerse);
+
+        let targetIdx = 0;
+        if (targetVerse) {
+          const foundIdx = newPassage.verses.findIndex((v) => v.verse === targetVerse);
+          if (foundIdx >= 0) targetIdx = foundIdx;
+        }
+
+        setSelectedVerseIdx(targetIdx);
+        const verseRef = targetVerse ? `:${targetVerse}` : "";
+        addHistoryLine(`Jumped to ${data.book} ${data.chapter}${verseRef} [${translation}] & highlighted verse.`);
       } else {
         addHistoryLine(`Failed to fetch ${book} ${chapter}.`);
       }
@@ -229,10 +272,15 @@ export function BibleTui() {
     saveBookmarks(updated);
   };
 
-  const updateUrlState = (passage: string, translation: string) => {
+  const updateUrlState = (passage: string, translation: string, verse?: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("passage", passage);
     params.set("translation", translation);
+    if (verse) {
+      params.set("verse", verse.toString());
+    } else {
+      params.delete("verse");
+    }
     router.replace(`/bible?${params.toString()}`);
   };
 
@@ -267,12 +315,12 @@ export function BibleTui() {
       } else {
         addHistoryLine(`Unknown theme "${themeArg}". Available themes: ${THEME_LIST.join(", ")}`);
       }
-    } else if (lower.startsWith(":read") || lower.startsWith("read ") || lower.startsWith(":goto") || lower.includes(" ")) {
+    } else if (lower.startsWith(":read") || lower.startsWith("read ") || lower.startsWith(":goto") || lower.includes(" ") || lower.includes(":")) {
       const parsed = parsePassageInput(cmd);
       if (parsed) {
-        fetchPassageFromApi(parsed.book, parsed.chapter, currentTranslation);
+        fetchPassageFromApi(parsed.book, parsed.chapter, currentTranslation, parsed.verse);
       } else {
-        addHistoryLine(`Could not parse passage for "${cmd}". Usage: :read Isaiah 6, :read John 3, :read Gen 1.`);
+        addHistoryLine(`Could not parse passage for "${cmd}". Usage: :read John 3:16, :read Isaiah 6:8, :read Gen 1:3.`);
       }
     } else if (lower.startsWith(":lineage")) {
       const name = cmd.split(" ")[1] || "david";
@@ -305,7 +353,7 @@ export function BibleTui() {
       setCommandHistory([{ id: "clear-1", text: "Command history cleared." }]);
     } else if (lower === ":help") {
       addHistoryLine("=== BIBLE TUI COMMAND DSL SPECIFICATION ===");
-      addHistoryLine("  :read [book] [chapter]   — Read ANY passage (e.g. :read Isaiah 6, :read John 3, :read Exodus 20)");
+      addHistoryLine("  :read [book] [ch]:[vs]   — Jump directly to verse (e.g. :read John 3:16, :read Isaiah 6:8)");
       addHistoryLine("  :search [query]          — Open FTS5 Search Overlay modal (e.g., :search light)");
       addHistoryLine("  :theme [name]            — Switch theme (cyan, amber, matrix, monokai)");
       addHistoryLine("  :bookmarks               — List saved bookmarks in console buffer");
@@ -512,12 +560,12 @@ export function BibleTui() {
               backgroundColor: themeConfig.cardBg,
               boxShadow: themeConfig.glow,
             }}
-            className="border p-5 rounded-lg flex flex-col justify-between min-h-[320px]"
+            className="border p-5 rounded-lg flex flex-col justify-between min-h-[320px] max-h-[500px] overflow-y-auto"
           >
             <div>
               <div
                 style={{ borderColor: themeConfig.border }}
-                className="flex items-center justify-between border-b pb-2 mb-3 text-xs font-mono"
+                className="flex items-center justify-between border-b pb-2 mb-3 text-xs font-mono sticky top-0 bg-[#0d1522]/95 z-10 backdrop-blur"
               >
                 <span className="font-bold flex items-center gap-1.5" style={{ color: themeConfig.fg }}>
                   <BookOpen className="w-4 h-4" /> PANE 01 // {currentTranslation} — {primaryData.book} {primaryData.chapter}
@@ -542,14 +590,16 @@ export function BibleTui() {
                   return (
                     <div
                       key={v.verse}
+                      id={`verse-${currentPassage}-${v.verse}`}
                       onClick={() => setSelectedVerseIdx(idx)}
                       style={{
-                        backgroundColor: isSelected ? `${themeConfig.fg}20` : isBookmarked ? "rgba(251, 191, 36, 0.1)" : "transparent",
+                        backgroundColor: isSelected ? `${themeConfig.fg}25` : isBookmarked ? "rgba(251, 191, 36, 0.1)" : "transparent",
                         borderColor: isSelected ? themeConfig.fg : isBookmarked ? "#fbbf24" : "transparent",
+                        boxShadow: isSelected ? themeConfig.glow : "none",
                       }}
-                      className={`p-3 rounded transition cursor-pointer text-xs sm:text-sm leading-relaxed flex items-start gap-2.5 ${
+                      className={`p-3 rounded transition-all duration-300 cursor-pointer text-xs sm:text-sm leading-relaxed flex items-start gap-2.5 ${
                         isSelected
-                          ? "border-l-4 font-medium"
+                          ? "border-l-4 font-semibold scale-[1.01]"
                           : isBookmarked
                           ? "border-l-2 text-amber-200"
                           : "hover:bg-white/5"
@@ -573,7 +623,7 @@ export function BibleTui() {
                         />
                       </button>
                       <div className="flex-1">
-                        <span className="font-bold mr-2 text-xs" style={{ color: isBookmarked ? "#fbbf24" : themeConfig.fg }}>
+                        <span className="font-bold mr-2 text-xs" style={{ color: isSelected ? "#ffffff" : isBookmarked ? "#fbbf24" : themeConfig.fg }}>
                           {v.verse}:
                         </span>
                         <span>{v.text}</span>
@@ -592,12 +642,12 @@ export function BibleTui() {
                 borderColor: `${themeConfig.secondaryFg}40`,
                 backgroundColor: themeConfig.cardBg,
               }}
-              className="border p-5 rounded-lg flex flex-col justify-between min-h-[320px]"
+              className="border p-5 rounded-lg flex flex-col justify-between min-h-[320px] max-h-[500px] overflow-y-auto"
             >
               <div>
                 <div
                   style={{ borderColor: `${themeConfig.secondaryFg}30` }}
-                  className="flex items-center justify-between border-b pb-2 mb-3 text-xs font-mono"
+                  className="flex items-center justify-between border-b pb-2 mb-3 text-xs font-mono sticky top-0 bg-[#0d1522]/95 z-10 backdrop-blur"
                 >
                   <span className="font-bold flex items-center gap-1.5" style={{ color: themeConfig.secondaryFg }}>
                     <Columns className="w-4 h-4" /> PANE 02 // {secondaryTranslation} — {secondaryData.book} {secondaryData.chapter}
@@ -624,12 +674,12 @@ export function BibleTui() {
                         key={v.verse}
                         onClick={() => setSelectedVerseIdx(idx)}
                         style={{
-                          backgroundColor: isSelected ? `${themeConfig.secondaryFg}20` : isBookmarked ? "rgba(251, 191, 36, 0.1)" : "transparent",
+                          backgroundColor: isSelected ? `${themeConfig.secondaryFg}25` : isBookmarked ? "rgba(251, 191, 36, 0.1)" : "transparent",
                           borderColor: isSelected ? themeConfig.secondaryFg : isBookmarked ? "#fbbf24" : "transparent",
                         }}
-                        className={`p-3 rounded transition cursor-pointer text-xs sm:text-sm leading-relaxed flex items-start gap-2.5 ${
+                        className={`p-3 rounded transition-all duration-300 cursor-pointer text-xs sm:text-sm leading-relaxed flex items-start gap-2.5 ${
                           isSelected
-                            ? "border-l-4 font-medium"
+                            ? "border-l-4 font-semibold scale-[1.01]"
                             : isBookmarked
                             ? "border-l-2 text-amber-200"
                             : "hover:bg-white/5"
@@ -653,7 +703,7 @@ export function BibleTui() {
                           />
                         </button>
                         <div className="flex-1">
-                          <span className="font-bold mr-2 text-xs" style={{ color: isBookmarked ? "#fbbf24" : themeConfig.secondaryFg }}>
+                          <span className="font-bold mr-2 text-xs" style={{ color: isSelected ? "#ffffff" : isBookmarked ? "#fbbf24" : themeConfig.secondaryFg }}>
                             {v.verse}:
                           </span>
                           <span>{v.text}</span>
@@ -729,7 +779,7 @@ export function BibleTui() {
             onChange={(e) => setCommandInput(e.target.value)}
             onFocus={() => setIsCommandFocused(true)}
             onBlur={() => setIsCommandFocused(false)}
-            placeholder="Type :read Isaiah 6, :read John 3, :search light, :theme amber, :bookmarks, :compare, or :help..."
+            placeholder="Type :read John 3:16, :read Isaiah 6:8, :search light, :theme amber, :bookmarks, or :help..."
             style={{ color: themeConfig.fg }}
             className="flex-1 bg-transparent border-none outline-none text-xs sm:text-sm placeholder-white/40 font-mono"
           />
@@ -773,8 +823,23 @@ export function BibleTui() {
         onClose={() => setIsSearchOpen(false)}
         initialQuery={searchInitialQuery}
         onSelectPassage={(passage) => {
-          updateUrlState(passage, currentTranslation);
-          setSelectedVerseIdx(0);
+          // Check if passage contains verse number e.g. "GEN.1.3" -> passage="GEN.1", verse=3
+          const parts = passage.split(".");
+          let pKey = passage;
+          let verseNum: number | undefined = undefined;
+          if (parts.length >= 3) {
+            pKey = `${parts[0]}.${parts[1]}`;
+            verseNum = parseInt(parts[2], 10);
+          }
+
+          updateUrlState(pKey, currentTranslation, verseNum);
+          if (verseNum) {
+            const passageData = getPassageData(currentTranslation, pKey);
+            const foundIdx = passageData.verses.findIndex((v) => v.verse === verseNum);
+            if (foundIdx >= 0) setSelectedVerseIdx(foundIdx);
+          } else {
+            setSelectedVerseIdx(0);
+          }
           addHistoryLine(`Jumped to passage ${passage} from search result.`);
         }}
       />
