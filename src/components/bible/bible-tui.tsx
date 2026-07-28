@@ -43,55 +43,6 @@ interface PassageData {
 
 export type BibleTranslation = "ESV" | "NLT" | "KJV" | "WEB";
 
-const STATIC_BIBLE_DATA: Record<string, Record<string, PassageData>> = {
-  ESV: {
-    "JOHN.3": {
-      book: "John",
-      chapter: 3,
-      verses: [
-        { verse: 1, text: "Now there was a man of the Pharisees named Nicodemus, a ruler of the Jews." },
-        { verse: 2, text: "This man came to Jesus by night and said to him, 'Rabbi, we know that you are a teacher come from God...'" },
-        { verse: 3, text: "Jesus answered him, 'Truly, truly, I say to you, unless one is born again he cannot see the kingdom of God.'" },
-        { verse: 16, text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life." },
-        { verse: 17, text: "For God did not send his Son into the world to condemn the world, but in order that the world might be saved through him." },
-      ],
-    },
-    "ISA.6": {
-      book: "Isaiah",
-      chapter: 6,
-      verses: [
-        { verse: 1, text: "In the year that King Uzziah died I saw the Lord sitting upon a throne, high and lifted up; and the train of his robe filled the temple." },
-        { verse: 2, text: "Above him stood the seraphim. Each had six wings: with two he covered his face, and with two he covered his feet, and with two he flew." },
-        { verse: 3, text: "And one called to another and said: 'Holy, holy, holy is the LORD of hosts; the whole earth is full of his glory!'" },
-        { verse: 8, text: "And I heard the voice of the Lord saying, 'Whom shall I send, and who will go for us?' Then I said, 'Here I am! Send me.'" },
-      ],
-    },
-  },
-  NLT: {
-    "JOHN.3": {
-      book: "John",
-      chapter: 3,
-      verses: [
-        { verse: 1, text: "There was a man named Nicodemus, a Jewish religious leader who was a Pharisee." },
-        { verse: 2, text: "After dark one evening, he came to speak with Jesus. 'Rabbi,' he said, 'we all know that God has sent you to teach us...'" },
-        { verse: 3, text: "Jesus replied, 'I tell you the truth, unless you are born again, you cannot see the Kingdom of God.'" },
-        { verse: 16, text: "For this is how God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life." },
-        { verse: 17, text: "God sent his Son into the world not to judge the world, but to save the world through him." },
-      ],
-    },
-    "ISA.6": {
-      book: "Isaiah",
-      chapter: 6,
-      verses: [
-        { verse: 1, text: "It was the year King Uzziah died that I saw the Lord. He was sitting on a lofty throne, and the train of his robe filled the Temple." },
-        { verse: 2, text: "Attending him were mighty seraphim, each having six wings. With two wings they covered their faces, with two they covered their feet, and with two they flew." },
-        { verse: 3, text: "They were calling to each other, 'Holy, holy, holy is the LORD of Heaven’s Armies! The whole earth is filled with his glory!'" },
-        { verse: 8, text: "Then I heard the Lord asking, 'Whom should I send as a messenger to this people? Who will go for us?' I said, 'Here I am. Send me.'" },
-      ],
-    },
-  },
-};
-
 const BOOKMARK_STORAGE_KEY = "bible_tui_bookmarks";
 
 function parsePassageInput(input: string): { book: string; chapter: number; verse?: number } | null {
@@ -157,16 +108,29 @@ export function BibleTui() {
   const getPassageData = (translation: string, passageKey: string): PassageData => {
     const dynKey = `${translation}.${passageKey}`;
     if (dynamicPassages[dynKey]) return dynamicPassages[dynKey];
-    if (STATIC_BIBLE_DATA[translation]?.[passageKey]) return STATIC_BIBLE_DATA[translation][passageKey];
-    if (STATIC_BIBLE_DATA["ESV"]?.[passageKey]) return STATIC_BIBLE_DATA["ESV"][passageKey];
 
-    return (
-      STATIC_BIBLE_DATA["ESV"]["ISA.6"] || STATIC_BIBLE_DATA["ESV"]["JOHN.3"]
-    );
+    // Fallback default structure while loading
+    return {
+      book: passageKey.split(".")[0] || "Passage",
+      chapter: parseInt(passageKey.split(".")[1] || "1", 10),
+      verses: [
+        { verse: 1, text: "Loading complete passage data from API engine..." },
+      ],
+    };
   };
 
   const primaryData = getPassageData(currentTranslation, currentPassage);
   const secondaryData = getPassageData(secondaryTranslation, currentPassage);
+
+  // Fetch full passage data for BOTH primary and secondary translations whenever passage or translations change
+  useEffect(() => {
+    const parts = currentPassage.split(".");
+    const book = parts[0] || "ISA";
+    const chapter = parseInt(parts[1] || "6", 10);
+    const targetVerse = initialVerseParam ? parseInt(initialVerseParam, 10) : undefined;
+
+    fetchPassagePair(book, chapter, currentTranslation, secondaryTranslation, targetVerse);
+  }, [currentPassage, currentTranslation, secondaryTranslation]);
 
   // Auto-scroll to selected verse
   useEffect(() => {
@@ -178,19 +142,6 @@ export function BibleTui() {
       }
     }
   }, [selectedVerseIdx, currentPassage, primaryData]);
-
-  // Initial verse param lookup
-  useEffect(() => {
-    if (initialVerseParam) {
-      const vNum = parseInt(initialVerseParam, 10);
-      if (!isNaN(vNum)) {
-        const vIdx = primaryData.verses.findIndex((v) => v.verse === vNum);
-        if (vIdx >= 0) {
-          setSelectedVerseIdx(vIdx);
-        }
-      }
-    }
-  }, [initialVerseParam, primaryData]);
 
   // Hydrate bookmarks from localStorage
   useEffect(() => {
@@ -207,36 +158,51 @@ export function BibleTui() {
     }
   }, []);
 
-  const fetchPassageFromApi = async (book: string, chapter: number, translation: string, targetVerse?: number) => {
+  const fetchPassagePair = async (
+    book: string,
+    chapter: number,
+    trans1: string,
+    trans2: string,
+    targetVerse?: number
+  ) => {
     setLoadingPassage(true);
     try {
-      const res = await fetch(`/api/bible/${translation}/${encodeURIComponent(book)}/${chapter}`);
-      if (res.ok) {
-        const data = await res.json();
-        const pKey = data.passageKey || `${data.bookId || book.toUpperCase()}.${chapter}`;
-        const newPassage: PassageData = {
-          book: data.book,
-          chapter: data.chapter,
-          verses: data.verses || [],
+      const [res1, res2] = await Promise.all([
+        fetch(`/api/bible/${trans1}/${encodeURIComponent(book)}/${chapter}`),
+        fetch(`/api/bible/${trans2}/${encodeURIComponent(book)}/${chapter}`),
+      ]);
+
+      const newPassages: Record<string, PassageData> = {};
+      let pKey = `${book}.${chapter}`;
+
+      if (res1.ok) {
+        const data1 = await res1.json();
+        pKey = data1.passageKey || `${data1.bookId || book.toUpperCase()}.${chapter}`;
+        newPassages[`${trans1}.${pKey}`] = {
+          book: data1.book,
+          chapter: data1.chapter,
+          verses: data1.verses || [],
         };
-        const dynKey = `${translation}.${pKey}`;
-        setDynamicPassages((prev) => ({ ...prev, [dynKey]: newPassage }));
-        updateUrlState(pKey, translation, targetVerse);
+      }
 
-        let targetIdx = 0;
-        if (targetVerse) {
-          const foundIdx = newPassage.verses.findIndex((v) => v.verse === targetVerse);
-          if (foundIdx >= 0) targetIdx = foundIdx;
-        }
+      if (res2.ok) {
+        const data2 = await res2.json();
+        newPassages[`${trans2}.${pKey}`] = {
+          book: data2.book,
+          chapter: data2.chapter,
+          verses: data2.verses || [],
+        };
+      }
 
-        setSelectedVerseIdx(targetIdx);
-        const verseRef = targetVerse ? `:${targetVerse}` : "";
-        addHistoryLine(`Jumped to ${data.book} ${data.chapter}${verseRef} [${translation}] & highlighted verse.`);
-      } else {
-        addHistoryLine(`Failed to fetch ${book} ${chapter}.`);
+      setDynamicPassages((prev) => ({ ...prev, ...newPassages }));
+
+      if (targetVerse) {
+        const primaryVerses = newPassages[`${trans1}.${pKey}`]?.verses || [];
+        const foundIdx = primaryVerses.findIndex((v) => v.verse === targetVerse);
+        if (foundIdx >= 0) setSelectedVerseIdx(foundIdx);
       }
     } catch (err) {
-      console.error("Passage API error:", err);
+      console.error("Passage API fetch error:", err);
     } finally {
       setLoadingPassage(false);
     }
@@ -297,7 +263,6 @@ export function BibleTui() {
     const cmd = commandInput.trim();
     if (!cmd) return;
 
-    // Add to executed command history list for Up/Down arrow navigation
     setExecutedCommands((prev) => [...prev, cmd]);
     setHistoryPointer(null);
 
@@ -323,7 +288,12 @@ export function BibleTui() {
     } else if (lower.startsWith(":read") || lower.startsWith("read ") || lower.startsWith(":goto") || lower.includes(" ") || lower.includes(":")) {
       const parsed = parsePassageInput(cmd);
       if (parsed) {
-        fetchPassageFromApi(parsed.book, parsed.chapter, currentTranslation, parsed.verse);
+        const bookCode = parsed.book.toUpperCase();
+        const pKey = `${bookCode}.${parsed.chapter}`;
+        updateUrlState(pKey, currentTranslation, parsed.verse);
+        setSelectedVerseIdx(0);
+        const verseStr = parsed.verse ? `:${parsed.verse}` : "";
+        addHistoryLine(`Navigating to ${parsed.book} ${parsed.chapter}${verseStr}...`);
       } else {
         addHistoryLine(`Could not parse passage for "${cmd}". Usage: :read John 3:16, :read Isaiah 6:8, :read Gen 1:3.`);
       }
@@ -504,7 +474,7 @@ export function BibleTui() {
                 {loadingPassage && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00f0ff]" />}
               </div>
               <p className="text-[11px] font-mono opacity-80" style={{ color: themeConfig.fg }}>
-                {primaryData.verses.length} Verses loaded // ESV vs NLT Dual-Pane Active
+                {primaryData.verses.length} Verses loaded // Parallel Comparison Synchronized
               </p>
             </div>
           </div>
@@ -578,7 +548,7 @@ export function BibleTui() {
               className="px-3 py-1 rounded font-bold border transition flex items-center gap-1.5"
             >
               <Columns className="w-3.5 h-3.5" />
-              ESV vs NLT [{compareMode ? "ON" : "OFF"}]
+              PARALLEL [{compareMode ? "ON" : "OFF"}]
             </button>
           </div>
         </div>
@@ -847,7 +817,7 @@ export function BibleTui() {
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>Tab</kbd> Dual-Pane</span>
             <span><kbd className="border px-1 rounded text-white" style={{ borderColor: themeConfig.border }}>Esc</kbd> Blur</span>
           </div>
-          <span className="text-[10px] opacity-75 font-bold uppercase">ESV vs NLT MODE ACTIVE</span>
+          <span className="text-[10px] opacity-75 font-bold uppercase">PARALLEL COMPARISON SYNCHRONIZED</span>
         </div>
       </div>
 
