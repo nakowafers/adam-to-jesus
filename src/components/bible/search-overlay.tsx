@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Search, X, Loader2, BookOpen } from "lucide-react";
+import { useTuiTheme } from "@/components/bible/use-tui-theme";
 
 export interface SearchHit {
   id: string;
@@ -17,7 +18,7 @@ export interface SearchHit {
 export interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectPassage: (passage: string) => void;
+  onSelectPassage: (passage: string, query?: string) => void;
   initialQuery?: string;
 }
 
@@ -165,7 +166,7 @@ export function SearchOverlay({
               <button
                 key={hit.id || hit.passage}
                 onClick={() => {
-                  onSelectPassage(hit.passage);
+                  onSelectPassage(hit.passage, query);
                   onClose();
                 }}
                 className="w-full text-left pt-3 first:pt-0 pb-2 px-3 rounded-lg hover:bg-zinc-800/80 transition-colors group cursor-pointer border border-transparent hover:border-zinc-700/60"

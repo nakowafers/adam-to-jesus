@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-export type TuiThemeName = 'cyan' | 'amber' | 'matrix' | 'monokai'
+export type TuiThemeName = 'classic' | 'cyan' | 'amber' | 'matrix' | 'monokai'
 
 export interface TuiTheme {
   name: TuiThemeName
@@ -14,9 +14,22 @@ export interface TuiTheme {
   glow: string
   secondaryFg: string
   cardBg: string
+  redLetter: string
 }
 
 export const TUI_THEMES: Record<TuiThemeName, TuiTheme> = {
+  classic: {
+    name: 'classic',
+    label: 'Classic Obsidian & Soft Crimson',
+    fg: '#f4f4f5',
+    secondaryFg: '#a1a1aa',
+    bg: '#09090b',
+    cardBg: '#18181b',
+    border: '#27272a',
+    muted: '#71717a',
+    glow: '0 0 12px rgba(255, 255, 255, 0.05)',
+    redLetter: '#f87171',
+  },
   cyan: {
     name: 'cyan',
     label: 'Cyberpunk Slate & Neon Cyan',
@@ -27,6 +40,7 @@ export const TUI_THEMES: Record<TuiThemeName, TuiTheme> = {
     border: '#00f0ff40',
     muted: '#00f0ff80',
     glow: '0 0 15px rgba(0, 240, 255, 0.25)',
+    redLetter: '#f87171',
   },
   amber: {
     name: 'amber',
@@ -38,6 +52,7 @@ export const TUI_THEMES: Record<TuiThemeName, TuiTheme> = {
     border: '#ffb00040',
     muted: '#ffb00080',
     glow: '0 0 15px rgba(255, 176, 0, 0.25)',
+    redLetter: '#fb7185',
   },
   matrix: {
     name: 'matrix',
@@ -49,6 +64,7 @@ export const TUI_THEMES: Record<TuiThemeName, TuiTheme> = {
     border: '#00ff6640',
     muted: '#00ff6680',
     glow: '0 0 15px rgba(0, 255, 102, 0.25)',
+    redLetter: '#f87171',
   },
   monokai: {
     name: 'monokai',
@@ -60,13 +76,14 @@ export const TUI_THEMES: Record<TuiThemeName, TuiTheme> = {
     border: '#ffd86640',
     muted: '#ffd86680',
     glow: '0 0 15px rgba(255, 216, 102, 0.25)',
+    redLetter: '#ff6188',
   },
 }
 
 export const THEME_STORAGE_KEY = 'bible_tui_theme'
-export const THEME_LIST: TuiThemeName[] = ['cyan', 'amber', 'matrix', 'monokai']
+export const THEME_LIST: TuiThemeName[] = ['classic', 'cyan', 'amber', 'matrix', 'monokai']
 
-export function useTuiTheme(defaultTheme: TuiThemeName = 'cyan') {
+export function useTuiTheme(defaultTheme: TuiThemeName = 'classic') {
   const [theme, setThemeState] = useState<TuiThemeName>(defaultTheme)
   const [isLoaded, setIsLoaded] = useState(false)
 

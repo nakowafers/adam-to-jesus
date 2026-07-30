@@ -82,25 +82,63 @@ const STATIC_INITIAL_BIBLE_DATA: Record<string, Record<string, Verse[]>> = {
     ESV: [
       { verse: 1, text: "Now there was a man of the Pharisees named Nicodemus, a ruler of the Jews." },
       { verse: 2, text: "This man came to Jesus by night and said to him, 'Rabbi, we know that you are a teacher come from God, for no one can do these signs that you do unless God is with him.'" },
-      { verse: 3, text: "Jesus answered him, 'Truly, truly, I say to you, unless one is born again he cannot see the kingdom of God.'" },
+      { verse: 3, text: "Jesus answered him, '<red>Truly, truly, I say to you, unless one is born again he cannot see the kingdom of God.</red>'" },
       { verse: 4, text: "Nicodemus said to him, 'How can a man be born when he is old? Can he enter a second time into his mother's womb and be born?'" },
-      { verse: 5, text: "Jesus answered, 'Truly, truly, I say to you, unless one is born of water and the Spirit, he cannot enter the kingdom of God.'" },
-      { verse: 16, text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life." },
-      { verse: 17, text: "For God did not send his Son into the world to condemn the world, but in order that the world might be saved through him." },
-      { verse: 36, text: "Whoever believes in the Son has eternal life; whoever does not obey the Son shall not see life, but the wrath of God remains on him." },
+      { verse: 5, text: "Jesus answered, '<red>Truly, truly, I say to you, unless one is born of water and the Spirit, he cannot enter the kingdom of God.</red>'" },
+      { verse: 16, text: "<red>For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.</red>" },
+      { verse: 17, text: "<red>For God did not send his Son into the world to condemn the world, but in order that the world might be saved through him.</red>" },
+      { verse: 36, text: "<red>Whoever believes in the Son has eternal life; whoever does not obey the Son shall not see life, but the wrath of God remains on him.</red>" },
     ],
     NLT: [
       { verse: 1, text: "There was a man named Nicodemus, a Jewish religious leader who was a Pharisee." },
       { verse: 2, text: "After dark one evening, he came to speak with Jesus. 'Rabbi,' he said, 'we all know that God has sent you to teach us. Your miraculous signs are proof that God is with you.'" },
-      { verse: 3, text: "Jesus replied, 'I tell you the truth, unless you are born again, you cannot see the Kingdom of God.'" },
+      { verse: 3, text: "Jesus replied, '<red>I tell you the truth, unless you are born again, you cannot see the Kingdom of God.</red>'" },
       { verse: 4, text: "'What do you mean?' exclaimed Nicodemus. 'How can an old man go back into his mother's womb and be born again?'" },
-      { verse: 5, text: "Jesus replied, 'I assure you, no one can enter the Kingdom of God without being born of water and the Spirit.'" },
-      { verse: 16, text: "For this is how God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life." },
-      { verse: 17, text: "God sent his Son into the world not to judge the world, but to save the world through him." },
-      { verse: 36, text: "And anyone who believes in God’s Son has eternal life. Anyone who doesn’t obey the Son will never experience eternal life but remains under God’s angry judgment." },
+      { verse: 5, text: "Jesus replied, '<red>I assure you, no one can enter the Kingdom of God without being born of water and the Spirit.</red>'" },
+      { verse: 16, text: "<red>For this is how God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.</red>" },
+      { verse: 17, text: "<red>God sent his Son into the world not to judge the world, but to save the world through him.</red>" },
+      { verse: 36, text: "<red>And anyone who believes in God’s Son has eternal life. Anyone who doesn’t obey the Son will never experience eternal life but remains under God’s angry judgment.</red>" },
     ],
   },
 };
+
+function normalizeBookCodeInPassage(passageStr: string): string {
+  const parts = passageStr.split(".");
+  if (parts.length < 2) return passageStr;
+  const rawBook = parts[0].toUpperCase();
+  const bookMap: Record<string, string> = {
+    JHN: "JOHN",
+    JN: "JOHN",
+    JOHN: "JOHN",
+    ISA: "ISA",
+    ISAIAH: "ISA",
+    GEN: "GEN",
+    GENESIS: "GEN",
+    MAT: "MAT",
+    MATTHEW: "MAT",
+    PSA: "PSA",
+    PSALM: "PSA",
+    PSALMS: "PSA",
+  };
+  const normBook = bookMap[rawBook] || rawBook;
+  return [normBook, ...parts.slice(1)].join(".");
+}
+
+function renderVerseContent(text: string, redColor: string, activeHighlightQuery?: string): string {
+  let processed = text.replace(/<red>(.*?)<\/red>/gi, `<span style="color: ${redColor}">$1</span>`);
+
+  if (activeHighlightQuery && activeHighlightQuery.trim()) {
+    const queryTerm = activeHighlightQuery.trim();
+    const escapeRegex = queryTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(?<!<[^>]*)\\b(${escapeRegex})\\b(?![^<]*>)`, "gi");
+    processed = processed.replace(
+      regex,
+      `<mark class="bg-amber-400/30 text-amber-200 px-1 rounded font-semibold underline decoration-amber-400">$1</mark>`
+    );
+  }
+
+  return processed;
+}
 
 function parsePassageInput(input: string): { book: string; chapter: number; verse?: number } | null {
   const clean = input.trim().toLowerCase().replace(/^:read\s*/, "").replace(/^read\s*/, "").replace(/^:goto\s*/, "");
@@ -133,6 +171,7 @@ export function BibleTui() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme, themeConfig, setTheme, cycleTheme } = useTuiTheme();
+  const [activeHighlightQuery, setActiveHighlightQuery] = useState<string | undefined>(undefined);
 
   // URL state synchronization (BibleTuiSession)
   const currentPassage = searchParams.get("passage") || "ISA.6";
@@ -650,7 +689,7 @@ export function BibleTui() {
                 </span>
               </div>
 
-              <div className="space-y-2.5 font-mono">
+              <div className="space-y-2.5 font-serif">
                 {primaryData.verses.map((v, idx) => {
                   const isSelected = idx === selectedVerseIdx;
                   const bookmarkKey = `${currentPassage}:${v.verse}`;
@@ -692,10 +731,10 @@ export function BibleTui() {
                         />
                       </button>
                       <div className="flex-1">
-                        <span className="font-bold mr-2 text-xs" style={{ color: isSelected ? "#ffffff" : isBookmarked ? "#fbbf24" : themeConfig.fg }}>
+                        <span className="font-bold mr-2 text-xs font-mono" style={{ color: isSelected ? "#ffffff" : isBookmarked ? "#fbbf24" : themeConfig.fg }}>
                           {v.verse}:
                         </span>
-                        <span>{v.text}</span>
+                        <span dangerouslySetInnerHTML={{ __html: renderVerseContent(v.text, themeConfig.redLetter, activeHighlightQuery) }} />
                       </div>
                     </div>
                   );
@@ -732,7 +771,7 @@ export function BibleTui() {
                   </span>
                 </div>
 
-                <div className="space-y-2.5 font-mono">
+                <div className="space-y-2.5 font-serif">
                   {secondaryData.verses.map((v, idx) => {
                     const isSelected = idx === selectedVerseIdx;
                     const bookmarkKey = `${currentPassage}:${v.verse}`;
@@ -772,10 +811,10 @@ export function BibleTui() {
                           />
                         </button>
                         <div className="flex-1">
-                          <span className="font-bold mr-2 text-xs" style={{ color: isSelected ? "#ffffff" : isBookmarked ? "#fbbf24" : themeConfig.secondaryFg }}>
+                          <span className="font-bold mr-2 text-xs font-mono" style={{ color: isSelected ? "#ffffff" : isBookmarked ? "#fbbf24" : themeConfig.secondaryFg }}>
                             {v.verse}:
                           </span>
-                          <span>{v.text}</span>
+                          <span dangerouslySetInnerHTML={{ __html: renderVerseContent(v.text, themeConfig.redLetter, activeHighlightQuery) }} />
                         </div>
                       </div>
                     );
@@ -893,9 +932,10 @@ export function BibleTui() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         initialQuery={searchInitialQuery}
-        onSelectPassage={(passage) => {
-          const parts = passage.split(".");
-          let pKey = passage;
+        onSelectPassage={(passage, searchQuery) => {
+          const normalizedPassage = normalizeBookCodeInPassage(passage);
+          const parts = normalizedPassage.split(".");
+          let pKey = normalizedPassage;
           let verseNum: number | undefined = undefined;
           if (parts.length >= 3) {
             pKey = `${parts[0]}.${parts[1]}`;
@@ -903,14 +943,26 @@ export function BibleTui() {
           }
 
           updateUrlState(pKey, currentTranslation, verseNum);
+          if (searchQuery) {
+            setActiveHighlightQuery(searchQuery);
+          }
+
           if (verseNum) {
             const passageData = getPassageData(currentTranslation, pKey);
             const foundIdx = passageData.verses.findIndex((v) => v.verse === verseNum);
-            if (foundIdx >= 0) setSelectedVerseIdx(foundIdx);
+            if (foundIdx >= 0) {
+              setSelectedVerseIdx(foundIdx);
+              setTimeout(() => {
+                const el = document.getElementById(`verse-${pKey}-${verseNum}`);
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+              }, 100);
+            }
           } else {
             setSelectedVerseIdx(0);
           }
-          addHistoryLine(`Jumped to passage ${passage} from search result.`);
+          addHistoryLine(`Jumped to passage ${normalizedPassage} from search result.`);
         }}
       />
     </div>
