@@ -91,18 +91,18 @@ describe("useEntitySelection hook", () => {
     assert.strictEqual(capturedResult?.selectedEntity, null);
   });
 
-  it("calls router.push with newUrl and scroll: false when param does not exist", () => {
+  it("calls router.replace with newUrl and scroll: false when param does not exist", () => {
     mockSearchParams = new URLSearchParams("");
     mockPathname = "/lineage";
 
     let capturedResult: any = null;
-    let pushCalledWith: [string, { scroll: boolean }] | null = null;
+    let replaceCalledWith: [string, { scroll: boolean }] | null = null;
 
     mockRouter = {
-      push: (url: string, opts?: { scroll?: boolean }) => {
-        pushCalledWith = [url, opts as { scroll: boolean }];
+      push: () => {},
+      replace: (url: string, opts?: { scroll?: boolean }) => {
+        replaceCalledWith = [url, opts as { scroll: boolean }];
       },
-      replace: () => {},
     };
 
     function TestComponent() {
@@ -114,24 +114,24 @@ describe("useEntitySelection hook", () => {
 
     capturedResult?.selectEntity("david");
 
-    assert.deepStrictEqual(pushCalledWith, [
+    assert.deepStrictEqual(replaceCalledWith, [
       "/lineage?ancestor=david",
       { scroll: false },
     ]);
   });
 
-  it("calls router.push with newUrl and scroll: false when param already exists", () => {
+  it("calls router.replace with newUrl and scroll: false when param already exists", () => {
     mockSearchParams = new URLSearchParams("ancestor=david");
     mockPathname = "/lineage";
 
     let capturedResult: any = null;
-    let pushCalledWith: [string, { scroll: boolean }] | null = null;
+    let replaceCalledWith: [string, { scroll: boolean }] | null = null;
 
     mockRouter = {
-      push: (url: string, opts?: { scroll?: boolean }) => {
-        pushCalledWith = [url, opts as { scroll: boolean }];
+      push: () => {},
+      replace: (url: string, opts?: { scroll?: boolean }) => {
+        replaceCalledWith = [url, opts as { scroll: boolean }];
       },
-      replace: () => {},
     };
 
     function TestComponent() {
@@ -143,7 +143,7 @@ describe("useEntitySelection hook", () => {
 
     capturedResult?.selectEntity("abraham");
 
-    assert.deepStrictEqual(pushCalledWith, [
+    assert.deepStrictEqual(replaceCalledWith, [
       "/lineage?ancestor=abraham",
       { scroll: false },
     ]);
@@ -154,13 +154,13 @@ describe("useEntitySelection hook", () => {
     mockPathname = "/lineage";
 
     let capturedResult: any = null;
-    let pushCalledWith: [string, { scroll: boolean }] | null = null;
+    let replaceCalledWith: [string, { scroll: boolean }] | null = null;
 
     mockRouter = {
-      push: (url: string, opts?: { scroll?: boolean }) => {
-        pushCalledWith = [url, opts as { scroll: boolean }];
+      push: () => {},
+      replace: (url: string, opts?: { scroll?: boolean }) => {
+        replaceCalledWith = [url, opts as { scroll: boolean }];
       },
-      replace: () => {},
     };
 
     function TestComponent() {
@@ -172,7 +172,7 @@ describe("useEntitySelection hook", () => {
 
     capturedResult?.clearSelection();
 
-    assert.deepStrictEqual(pushCalledWith, [
+    assert.deepStrictEqual(replaceCalledWith, [
       "/lineage?foo=bar",
       { scroll: false },
     ]);

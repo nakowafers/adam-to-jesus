@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useDeferredValue, useRef, useEffect } from "react";
 import { 
   Table, 
   Search, 
@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 import type { Ancestor } from "@/lib/lineage-data";
 import type { LineageGraph } from "@/lib/lineage-repository";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useEntitySelection } from "@/hooks/use-entity-selection";
 import { AncestorDrawer } from "./ancestor-drawer";
+import { AncestorNode } from "./ancestor-node";
 
 interface GenealogyTreeProps {
   initialGraph: LineageGraph;
@@ -40,7 +40,6 @@ function getEpochForAncestor(ancestor: Ancestor): string {
 }
 
 export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
-  const isMobile = useIsMobile();
   const { mainLineage, royalLine, biologicalLine, jesus } = initialGraph;
 
   const allAncestors = useMemo(() => {
@@ -59,21 +58,51 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
   const [activeEpoch, setActiveEpoch] = useState<string>("all");
   const [activeLineageFilter, setActiveLineageFilter] = useState<"all" | "main" | "royal" | "biological">("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+
+  const mobileListRef = useRef<HTMLDivElement>(null);
+  const desktopTableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mobileListRef.current) {
+      mobileListRef.current.scrollTop = 0;
+    }
+    if (desktopTableRef.current) {
+      desktopTableRef.current.scrollTop = 0;
+    }
+  }, [activeEpoch, activeLineageFilter]);
 
   const filteredAncestors = useMemo(() => {
+    const query = deferredSearchQuery.trim().toLowerCase();
     return allAncestors.filter((a) => {
       const epoch = getEpochForAncestor(a);
       const matchesEpoch = activeEpoch === "all" || epoch === activeEpoch;
-      const matchesLineage = activeLineageFilter === "all" || a.lineage === activeLineageFilter;
-      const matchesSearch =
-        !searchQuery ||
-        a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.verseReference.toLowerCase().includes(searchQuery.toLowerCase());
+      let matchesLineage = true;
+      if (activeLineageFilter === "main") {
+        matchesLineage = a.lineage === "main";
+      } else if (activeLineageFilter === "royal") {
+        matchesLineage =
+          a.lineage === "main" ||
+          a.lineage === "royal" ||
+          a.id.startsWith("jesus");
+      } else if (activeLineageFilter === "biological") {
+        matchesLineage =
+          a.lineage === "main" ||
+          a.lineage === "biological" ||
+          a.id.startsWith("jesus");
+      }
 
-      return matchesEpoch && matchesLineage && matchesSearch;
+      if (!matchesEpoch || !matchesLineage) return false;
+
+      const matchesSearch =
+        !query ||
+        a.name.toLowerCase().includes(query) ||
+        a.title.toLowerCase().includes(query) ||
+        a.verseReference.toLowerCase().includes(query);
+
+      return matchesSearch;
     });
-  }, [allAncestors, activeEpoch, activeLineageFilter, searchQuery]);
+  }, [allAncestors, activeEpoch, activeLineageFilter, deferredSearchQuery]);
 
   const handleRowClick = useCallback(
     (id: string) => {
@@ -112,20 +141,20 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
         {/* Search Input & Lineage Segment Controls */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[200px] sm:w-64">
-            <Search className="w-4 h-4 absolute left-3 top-3 text-zinc-500" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
             <input
               type="text"
               placeholder="Search by name, title, verse..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+              className="w-full min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl pl-9 pr-4 py-2.5 text-sm sm:text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
             />
           </div>
 
           <div className="flex items-center bg-zinc-950 border border-zinc-800 p-1 rounded-xl gap-1">
             <button
               onClick={() => setActiveLineageFilter("all")}
-              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+              className={`min-h-[44px] px-3.5 py-2.5 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors ${
                 activeLineageFilter === "all"
                   ? "bg-amber-500 text-zinc-950 font-bold"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -135,7 +164,7 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
             </button>
             <button
               onClick={() => setActiveLineageFilter("main")}
-              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+              className={`min-h-[44px] px-3.5 py-2.5 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors ${
                 activeLineageFilter === "main"
                   ? "bg-amber-500 text-zinc-950 font-bold"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -145,7 +174,7 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
             </button>
             <button
               onClick={() => setActiveLineageFilter("royal")}
-              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+              className={`min-h-[44px] px-3.5 py-2.5 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors ${
                 activeLineageFilter === "royal"
                   ? "bg-amber-500 text-zinc-950 font-bold"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -155,7 +184,7 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
             </button>
             <button
               onClick={() => setActiveLineageFilter("biological")}
-              className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-colors ${
+              className={`min-h-[44px] px-3.5 py-2.5 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors ${
                 activeLineageFilter === "biological"
                   ? "bg-emerald-500 text-zinc-950 font-bold"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -174,7 +203,7 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
           <button
             key={epoch.id}
             onClick={() => setActiveEpoch(epoch.id)}
-            className={`text-xs px-3 py-1.5 rounded-full font-medium whitespace-nowrap transition-all border ${
+            className={`min-h-[44px] px-4 py-2.5 rounded-full flex items-center justify-center text-xs font-semibold whitespace-nowrap transition-all border ${
               activeEpoch === epoch.id
                 ? "bg-amber-500 text-zinc-950 font-bold border-amber-400 shadow-md shadow-amber-500/20"
                 : "bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800"
@@ -199,9 +228,36 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
             </span>
           </div>
 
-          <div className="overflow-x-auto max-h-[72vh] scrollbar-thin">
+          {/* Mobile Card List View (<md) */}
+          <div
+            ref={mobileListRef}
+            className="block md:hidden max-h-[72vh] overflow-y-auto scrollbar-thin p-3 space-y-2.5"
+          >
+            {filteredAncestors.length === 0 ? (
+              <div className="py-12 text-center text-xs text-zinc-500">
+                No ancestral entries found matching your query or filters.
+              </div>
+            ) : (
+              filteredAncestors.map((ancestor, index) => (
+                <AncestorNode
+                  key={ancestor.id}
+                  id={`ancestor-card-${ancestor.id}`}
+                  ancestor={ancestor}
+                  index={index}
+                  isSelected={activeAncestor?.id === ancestor.id}
+                  onClick={() => handleRowClick(ancestor.id)}
+                />
+              ))
+            )}
+          </div>
+
+          {/* Desktop Table View (>=md) */}
+          <div
+            ref={desktopTableRef}
+            className="hidden md:block overflow-x-auto max-h-[72vh] scrollbar-thin"
+          >
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-zinc-950/90 text-zinc-400 sticky top-0 border-b border-zinc-800 font-mono uppercase text-[10px] backdrop-blur-md z-10">
+              <thead className="bg-zinc-950/90 text-zinc-300 sticky top-0 border-b border-zinc-800 font-mono uppercase text-xs backdrop-blur-md z-10">
                 <tr>
                   <th className="py-3 px-4">Gen</th>
                   <th className="py-3 px-4">Name / Title</th>
@@ -234,11 +290,11 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
                         </td>
                         <td className="py-3 px-4">
                           <div className="font-bold text-zinc-100">{ancestor.name}</div>
-                          <div className="text-[11px] text-zinc-400 line-clamp-1">{ancestor.title}</div>
+                          <div className="text-xs text-zinc-300 line-clamp-1">{ancestor.title}</div>
                         </td>
                         <td className="py-3 px-4">
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-mono font-medium border ${
+                            className={`px-2.5 py-0.5 rounded-full text-xs uppercase font-mono font-medium border ${
                               ancestor.lineage === "royal"
                                 ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
                                 : ancestor.lineage === "biological"
@@ -253,7 +309,7 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
                               : "Main Trunk"}
                           </span>
                         </td>
-                        <td className="py-3 px-4 font-mono text-amber-400/80 text-[11px]">
+                        <td className="py-3 px-4 font-mono text-amber-400/90 text-xs">
                           {ancestor.verseReference}
                         </td>
                       </tr>
@@ -266,22 +322,20 @@ export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
         </div>
 
         {/* Side-by-Side Research Canvas (Desktop) */}
-        {!isMobile && (
-          <div className="lg:col-span-5 sticky top-20">
-            {activeAncestor && <DetailStudyPanel ancestor={activeAncestor} />}
-          </div>
-        )}
+        <div className="hidden lg:block lg:col-span-5 sticky top-20">
+          {activeAncestor && <DetailStudyPanel ancestor={activeAncestor} />}
+        </div>
       </div>
 
-      {/* Mobile Drawer when row clicked */}
-      {isMobile && (
+      {/* Mobile & Tablet Drawer when row clicked */}
+      <div className="lg:hidden">
         <AncestorDrawer
           ancestors={allAncestors}
           selectedId={selectedId}
           isOpen={selectedId !== null}
           onClose={handleCloseDrawer}
         />
-      )}
+      </div>
     </div>
   );
 }
@@ -292,7 +346,7 @@ function DetailStudyPanel({ ancestor }: { ancestor: Ancestor }) {
       {/* Header */}
       <div className="border-b border-zinc-800 pb-4 flex items-start justify-between">
         <div>
-          <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest">
+          <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
             {getEpochForAncestor(ancestor)} • Generation {ancestor.generation}
           </span>
           <h2 className="text-2xl font-black text-zinc-100 mt-1">{ancestor.name}</h2>
@@ -337,7 +391,7 @@ function DetailStudyPanel({ ancestor }: { ancestor: Ancestor }) {
               href={ancestor.verseLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-amber-300 hover:text-amber-200 underline flex items-center gap-1.5 font-medium"
+              className="min-h-[44px] py-2 text-xs text-amber-300 hover:text-amber-200 underline inline-flex items-center gap-1.5 font-medium"
             >
               Read full chapter <ExternalLink className="w-3.5 h-3.5" />
             </a>

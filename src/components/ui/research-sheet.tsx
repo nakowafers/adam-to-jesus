@@ -29,6 +29,7 @@ export interface ResearchSheetProps {
   backdropClassName?: string;
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
+  direction?: "right" | "bottom";
 }
 
 function ResearchSheetRoot({
@@ -39,6 +40,7 @@ function ResearchSheetRoot({
   backdropClassName,
   ariaLabelledBy,
   ariaDescribedBy,
+  direction = "right",
 }: ResearchSheetProps) {
   useEffect(() => {
     if (!isOpen) return;
@@ -58,6 +60,15 @@ function ResearchSheetRoot({
       document.body.style.overflow = originalOverflow;
     };
   }, [isOpen, onClose]);
+
+  const isBottom = direction === "bottom";
+  const motionProps = isBottom
+    ? { initial: { y: "100%" }, animate: { y: 0 }, exit: { y: "100%" } }
+    : { initial: { x: "100%" }, animate: { x: 0 }, exit: { x: "100%" } };
+
+  const defaultClasses = isBottom
+    ? "fixed inset-x-0 bottom-0 z-50 flex w-full flex-col border-t border-zinc-800 bg-black shadow-2xl"
+    : "fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-zinc-800 bg-black shadow-2xl";
 
   return (
     <ResearchSheetContext.Provider value={{ onClose, isOpen }}>
@@ -83,14 +94,9 @@ function ResearchSheetRoot({
             {/* Slide-Over Sheet Container */}
             <motion.div
               key="research-sheet-container"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              {...motionProps}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={cn(
-                "fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-zinc-800 bg-black shadow-2xl",
-                className
-              )}
+              className={cn(defaultClasses, className)}
               role="dialog"
               aria-modal="true"
               aria-labelledby={ariaLabelledBy}
@@ -137,7 +143,7 @@ function ResearchSheetHeader({
           type="button"
           onClick={handleClose}
           aria-label="Close details"
-          className="ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/80 text-zinc-400 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-600"
+          className="ml-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/80 text-zinc-400 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-600"
           data-testid="research-sheet-close"
         >
           <X className="h-5 w-5" />

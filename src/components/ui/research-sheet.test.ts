@@ -85,4 +85,37 @@ describe("ResearchSheet Primitive Component", () => {
       }
     );
   });
+
+  it("applies bottom-aligned container classes when direction is bottom", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(
+        ResearchSheet,
+        {
+          isOpen: true,
+          onClose: () => {},
+          direction: "bottom",
+        },
+        React.createElement("p", null, "Bottom Sheet")
+      )
+    );
+
+    assert.match(html, /fixed inset-x-0 bottom-0/);
+    assert.match(html, /border-t/);
+  });
+
+  it("applies right-aligned container classes when direction is right or defaulted", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(
+        ResearchSheet,
+        {
+          isOpen: true,
+          onClose: () => {},
+        },
+        React.createElement("p", null, "Right Sheet")
+      )
+    );
+
+    assert.match(html, /fixed inset-y-0 right-0/);
+    assert.match(html, /border-l/);
+  });
 });

@@ -40,7 +40,7 @@ export function useEntitySelection<T extends { id: string }>(
       const queryString = currentParams.toString();
       const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
-      router.push(newUrl, { scroll: false });
+      router.replace(newUrl, { scroll: false });
     },
     [paramKey, searchParams, pathname, router]
   );
