@@ -13,6 +13,7 @@ export function SiteHeader() {
         <nav className="flex items-center gap-4 text-xs font-medium text-zinc-400">
           <Link href="/lineage" className="hover:text-zinc-200 transition">Genealogy</Link>
           <Link href="/disciples/martyrdom" className="hover:text-zinc-200 transition">Disciples</Link>
+          <Link href="/prophecies" className="hover:text-zinc-200 transition">Prophecies</Link>
           <Link href="/bible" className="text-[#00f0ff] hover:underline font-mono font-semibold transition">Bible TUI</Link>
         </nav>
       </div>

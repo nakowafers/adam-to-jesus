@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { GitFork, Cross, Terminal } from "lucide-react";
+import { GitFork, Cross, Terminal, ScrollText } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ const siteJsonLd = {
   "name": "From Adam to Jesus",
   "url": "https://fromadamtojesus.com",
   "description":
-    "Explore the biblical narrative through interactive history — the genealogy of Jesus, the twelve apostles, and the built-in Bible TUI reader.",
+    "Explore the biblical narrative through interactive history — the genealogy of Jesus, the twelve apostles, Old Testament Messianic prophecies, and the built-in Bible TUI reader.",
 };
 
 const siteJsonLdString = JSON.stringify(siteJsonLd);
@@ -43,7 +43,7 @@ export default function Home() {
 
         {/* Card Grid */}
         <section className="w-full max-w-5xl mx-auto px-4 pb-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Lineage Card */}
             <Link href="/lineage" className="group block">
               <Card className="h-full border-zinc-800 bg-zinc-950 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-amber-400/60 group-hover:shadow-lg group-hover:shadow-amber-900/10 cursor-pointer">
@@ -72,6 +72,22 @@ export default function Home() {
                   <CardDescription className="text-zinc-400 text-sm leading-relaxed">
                     Explore the historical accounts of the twelve apostles and
                     their martyrdoms.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent />
+              </Card>
+            </Link>
+
+            {/* Messianic Prophecies Card */}
+            <Link href="/prophecies" className="group block">
+              <Card className="h-full border-zinc-800 bg-zinc-950 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-amber-400/60 group-hover:shadow-lg group-hover:shadow-amber-900/10 cursor-pointer">
+                <CardHeader>
+                  <ScrollText className="size-8 text-amber-400/80 mb-2" />
+                  <CardTitle className="text-zinc-50 text-xl">
+                    Messianic Prophecies
+                  </CardTitle>
+                  <CardDescription className="text-zinc-400 text-sm leading-relaxed">
+                    Explore Old Testament prophecies foretelling Christ&apos;s lineage, birth, mission, passion, and resurrection fulfilled in the Gospels (ESV).
                   </CardDescription>
                 </CardHeader>
                 <CardContent />
