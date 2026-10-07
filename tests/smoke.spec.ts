@@ -6,10 +6,11 @@ test.describe('Landing page (/)', () => {
     await expect(page.locator('h1')).toContainText('From Adam to Jesus')
   })
 
-  test('should display navigation cards including Bible TUI Reader', async ({ page }) => {
+  test('should display navigation cards including Bible TUI Reader and Messianic Prophecies', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByText('The Genealogy')).toBeVisible()
     await expect(page.getByText('The Disciples')).toBeVisible()
+    await expect(page.getByText('Messianic Prophecies')).toBeVisible()
     await expect(page.getByText('Bible TUI Reader')).toBeVisible()
   })
 
@@ -23,6 +24,12 @@ test.describe('Landing page (/)', () => {
     await page.goto('/')
     await page.getByText('The Disciples').click()
     await expect(page).toHaveURL('/disciples/martyrdom')
+  })
+
+  test('should navigate to prophecies page via card click', async ({ page }) => {
+    await page.goto('/')
+    await page.getByText('Messianic Prophecies').click()
+    await expect(page).toHaveURL('/prophecies')
   })
 
   test('should navigate to bible tui page via card click', async ({ page }) => {
@@ -107,9 +114,26 @@ test.describe('Martyrdom page (/disciples/martyrdom)', () => {
   })
 })
 
+test.describe('Prophecies page (/prophecies)', () => {
+  test('should load prophecies page, header, and search input', async ({ page }) => {
+    await page.goto('/prophecies')
+    await expect(page.locator('h1')).toContainText('Old Testament Prophecies in the Gospels')
+    await expect(page.getByPlaceholder(/Search by topic, reference/)).toBeVisible()
+    await expect(page.getByText('Virgin Birth of the Messiah')).toBeVisible()
+  })
+
+  test('should show the site header with home link', async ({ page }) => {
+    await page.goto('/prophecies')
+    const header = page.getByRole('link', { name: /^From Adam to Jesus$/ })
+    await expect(header).toBeVisible()
+    await header.click()
+    await expect(page).toHaveURL('/')
+  })
+})
+
 test.describe('Site header', () => {
   test('site header is present on all pages', async ({ page }) => {
-    const pages = ['/', '/lineage', '/disciples/martyrdom', '/bible']
+    const pages = ['/', '/lineage', '/disciples/martyrdom', '/prophecies', '/bible']
     for (const route of pages) {
       await page.goto(route)
       await expect(
