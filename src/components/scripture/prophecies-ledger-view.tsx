@@ -108,7 +108,7 @@ export function PropheciesLedgerView({ initialProphecies }: PropheciesLedgerView
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-700 text-sm font-mono p-0.5"
+                className="absolute right-1 top-1 text-stone-400 hover:text-stone-700 min-w-[44px] min-h-[44px] flex items-center justify-center text-sm font-mono touch-manipulation"
                 aria-label="Clear search"
               >
                 ✕
@@ -200,6 +200,7 @@ export function PropheciesLedgerView({ initialProphecies }: PropheciesLedgerView
                       return (
                         <article
                           key={item.id}
+                          id={item.id}
                           className="bg-white border border-stone-200/90 rounded-2xl shadow-xs overflow-hidden transition-all hover:border-stone-300"
                         >
                           {/* Header Click Target with 44px+ mobile touch height */}
@@ -207,6 +208,7 @@ export function PropheciesLedgerView({ initialProphecies }: PropheciesLedgerView
                             onClick={() => toggleItem(item.id)}
                             className="w-full min-h-[44px] text-left p-4 sm:p-5 flex items-start justify-between gap-3 hover:bg-stone-50/50 transition-colors touch-manipulation"
                             aria-expanded={isExpanded}
+                            aria-controls={`prophecy-panel-${item.id}`}
                           >
                             <div className="space-y-1 pr-2">
                               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
@@ -241,7 +243,10 @@ export function PropheciesLedgerView({ initialProphecies }: PropheciesLedgerView
 
                           {/* Expandable Disclosure Body */}
                           {isExpanded && (
-                            <div className="px-4 pb-5 sm:px-6 sm:pb-6 pt-1 border-t border-stone-100 space-y-4 bg-[#faf9f6]/30 animate-fadeIn">
+                            <div
+                              id={`prophecy-panel-${item.id}`}
+                              className="px-4 pb-5 sm:px-6 sm:pb-6 pt-1 border-t border-stone-100 space-y-4 bg-[#faf9f6]/30 animate-fadeIn"
+                            >
                               <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-sans">
                                 {item.prophecyDescription}
                               </p>

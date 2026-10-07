@@ -29,4 +29,12 @@ export class InMapperProphecyAdapter implements ProphecyRepository {
   }
 }
 
-export const prophecyRepository: ProphecyRepository = new InMapperProphecyAdapter();
+export interface CloudflareEnv {
+  DB?: unknown;
+}
+
+export function createProphecyRepository(_env?: CloudflareEnv): ProphecyRepository {
+  return new InMapperProphecyAdapter();
+}
+
+export const prophecyRepository: ProphecyRepository = createProphecyRepository();

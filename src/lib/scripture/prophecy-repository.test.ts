@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   InMapperProphecyAdapter,
+  createProphecyRepository,
   prophecyRepository,
 } from "./prophecy-repository";
 
@@ -56,6 +57,20 @@ describe("ProphecyRepository", () => {
     it("returns undefined for unknown prophecy id", async () => {
       const unknown = await adapter.getProphecyById("unknown-id-12345");
       assert.equal(unknown, undefined);
+    });
+  });
+
+  describe("createProphecyRepository factory", () => {
+    it("creates a working ProphecyRepository instance", async () => {
+      const repo = createProphecyRepository();
+      const prophecies = await repo.getAllProphecies();
+      assert.equal(prophecies.length, 20);
+    });
+
+    it("accepts optional CloudflareEnv", async () => {
+      const repo = createProphecyRepository({ DB: {} });
+      const prophecies = await repo.getAllProphecies();
+      assert.equal(prophecies.length, 20);
     });
   });
 
