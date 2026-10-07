@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import type { Ancestor } from "@/lib/genealogy-data";
+import type { Ancestor } from "@/lib/lineage-data";
 
 interface AncestorNodeProps {
   ancestor: Ancestor;

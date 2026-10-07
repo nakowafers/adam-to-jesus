@@ -1,5 +1,34 @@
-import { Ancestor } from "@/lib/genealogy-data";
-export type { Ancestor };
+export type LineageType = "main" | "royal" | "biological";
+
+export interface Ancestor {
+  id: string;
+  name: string;
+  title: string;
+  summary: string;
+  verse: string;
+  verseReference: string;
+  verseLink: string;
+  lineage: LineageType;
+  generation: number;
+}
+
+export const EPOCHS = [
+  { id: "all", label: "All Epochs" },
+  { id: "Patriarchs", label: "Patriarchs (Adam-Joseph)" },
+  { id: "Exodus & Conquest", label: "Exodus & Judges" },
+  { id: "United Monarchy", label: "United Monarchy (David)" },
+  { id: "Divided Monarchy & Exile", label: "Exile Era" },
+  { id: "Gospel Era", label: "Gospel Era (Jesus)" },
+];
+
+export function getEpochForAncestor(ancestor: Ancestor): string {
+  const gen = ancestor.generation;
+  if (gen <= 20) return "Patriarchs";
+  if (gen <= 32) return "Exodus & Conquest";
+  if (gen === 33) return "United Monarchy";
+  if (gen < 60) return "Divided Monarchy & Exile";
+  return "Gospel Era";
+}
 
 export const fullAncestors: Ancestor[] = [
   // Patriarchs (Adam to David)

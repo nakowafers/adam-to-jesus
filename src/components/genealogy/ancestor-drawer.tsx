@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Ancestor } from "@/lib/genealogy-data";
+import type { Ancestor } from "@/lib/lineage-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ResearchSheet } from "@/components/ui/research-sheet";
 

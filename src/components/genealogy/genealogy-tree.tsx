@@ -11,7 +11,7 @@ import {
   Filter,
   CheckCircle2
 } from "lucide-react";
-import type { Ancestor } from "@/lib/lineage-data";
+import { Ancestor, EPOCHS, getEpochForAncestor } from "@/lib/lineage-data";
 import type { LineageGraph } from "@/lib/lineage-repository";
 import { useEntitySelection } from "@/hooks/use-entity-selection";
 import { AncestorDrawer } from "./ancestor-drawer";
@@ -19,24 +19,6 @@ import { AncestorNode } from "./ancestor-node";
 
 interface GenealogyTreeProps {
   initialGraph: LineageGraph;
-}
-
-const EPOCHS = [
-  { id: "all", label: "All Epochs" },
-  { id: "Patriarchs", label: "Patriarchs (Adam-Joseph)" },
-  { id: "Exodus & Conquest", label: "Exodus & Judges" },
-  { id: "United Monarchy", label: "United Monarchy (David)" },
-  { id: "Divided Monarchy & Exile", label: "Exile Era" },
-  { id: "Gospel Era", label: "Gospel Era (Jesus)" },
-];
-
-function getEpochForAncestor(ancestor: Ancestor): string {
-  const gen = ancestor.generation;
-  if (gen <= 20) return "Patriarchs";
-  if (gen <= 32) return "Exodus & Conquest";
-  if (gen === 33) return "United Monarchy";
-  if (gen < 60) return "Divided Monarchy & Exile";
-  return "Gospel Era";
 }
 
 export function GenealogyTree({ initialGraph }: GenealogyTreeProps) {
