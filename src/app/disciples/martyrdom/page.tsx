@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getDisciples, type Disciple } from '@/lib/disciples';
+import { createMartyrdomRepository, type Disciple } from '@/lib/disciples';
 import { MartyrdomContainer } from '@/components/disciples/martyrdom-container';
 import { History, Bookmark, ChevronRight } from 'lucide-react';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
@@ -14,25 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function MartyrdomPage() {
-  let disciples: Disciple[] = [];
-  try {
-    const context = await getCloudflareContext({ async: true });
-    const env = context.env as { DB: any };
-    disciples = await getDisciples(env?.DB);
-  } catch (e) {
-    console.error("Failed to fetch from D1, using fallback:", e);
-    // Fallback data for debugging
-    disciples = [
-      { id: 'peter', name: 'Simon Peter', symbol: 'cross', year_of_death: '64 AD', location_of_death: 'Rome', method_of_death: 'Crucifixion', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High', scripture_reference: 'N/A' }
-    ];
-  }
-
-  // If still empty after trying D1, use the debug fallback
-  if (disciples.length === 0) {
-    disciples = [
-      { id: 'peter', name: 'Simon Peter', symbol: 'cross', year_of_death: '64 AD', location_of_death: 'Rome', method_of_death: 'Crucifixion', narrative: 'Fallback data', sources: '[]', reliability_score: 90, certainty_level: 'High', scripture_reference: 'N/A' }
-    ];
-  }
+  const context = await getCloudflareContext({ async: true }).catch(() => null);
+  const env = context?.env as { DB?: unknown } | undefined;
+  const repo = createMartyrdomRepository(env?.DB);
+  const disciples: Disciple[] = await repo.getAllDisciples();
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] selection:bg-[#D4AF37]/30 selection:text-[#0A0A0A]">
