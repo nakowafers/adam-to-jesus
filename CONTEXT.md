@@ -16,7 +16,6 @@ This document maintains the canonical domain vocabulary for the "Adam to Jesus" 
 - **TuiThemeConfig**: The centralized theme token definitions (`classic`, `cyan`, `amber`, `matrix`, `monokai`) managing foreground (`fg`), secondary foreground (`secondaryFg`), background (`bg`), card background (`cardBg`), border (`border`), muted text (`muted`), glow effect (`glow`), and red-letter text (`redLetter`) for words of Jesus across the TUI.
 - **RedLetterMarkup**: The inline markup specification (`<red>...</red>`) used within scripture verse strings to delimit spoken words of Jesus, rendered dynamically using the active theme's `redLetter` color token.
 - **SearchVerseHighlight**: The search navigation seam managing automatic smooth scrolling (`scrollIntoView`), target verse container selection ring, and inline search term keyword highlighting (`<mark>`) when jumping from FTS5 search results to a specific verse.
-- **BookCodeNormalizer**: The canonical book mapping utility translating varied book abbreviations (`JHN`, `Jn`, `John`, `JN`) into standardized Bible book identifiers (`JOHN`, `GEN`, `ISA`, `MAT`, `PSA`).
-
-
-
+- **BookCodeNormalizer**: The canonical book mapping utility translating varied book abbreviations (`Jn`, `John`, `JN`, `Isaiah`, `Gen`) into standardized 3-letter USFM Bible book identifiers (`GEN`, `EXO`, `PSA`, `ISA`, `MAT`, `MRK`, `LUK`, `JHN`, `ACT`, `ROM`, `REV`).
+- **ScriptureRepository**: The unified scripture access seam providing edge-compatible passage querying, book code normalization, and instant offline resilience. Dual-mode architecture: `StaticScriptureAdapter` (instant zero-latency client/test offline dictionary) and `EdgeBibleAdapter` (Edge runtime fetch with live remote API sync, timeout bounds, and structured offline synthesis).
+- **MartyrdomRepository**: The apostolic data access seam providing edge-compatible querying of the 12 apostles and martyrdom records. Backed by a dual-mode adapter architecture: `InMapperMartyrdomAdapter` (in-memory static historical dataset in `src/lib/disciples-data.ts`) and `CloudflareD1MartyrdomAdapter` (Cloudflare D1 SQL for edge runtime).
